@@ -181,7 +181,13 @@ function buildNodeProps(node, config, nodeCallbacks = {}, highlightedNode, highl
     }
 
     const t = 1 / transform;
-    const nodeSize = node.size || config.node.size;
+
+    // if there is a node config level width and height specified clear out the
+    //size if it is set
+    const nodeWidth = node.width || config.node.width;
+    const nodeHeight = node.height || config.node.height;
+    const nodeSize = nodeWidth && nodeHeight ? undefined : node.size || config.node.size;
+
     const fontSize = highlight ? config.node.highlightFontSize : config.node.fontSize;
     const dx = fontSize * t + nodeSize / 100 + 1.5;
     const svg = node.svg || config.node.svg;
@@ -206,7 +212,9 @@ function buildNodeProps(node, config, nodeCallbacks = {}, highlightedNode, highl
         onMouseOut: nodeCallbacks.onMouseOut,
         opacity,
         renderLabel: config.node.renderLabel,
-        size: nodeSize * t,
+        size: nodeSize ? nodeSize * t : undefined,
+        width: nodeWidth ? nodeWidth * t : undefined,
+        height: nodeHeight ? nodeHeight * t : undefined,
         stroke,
         strokeWidth: strokeWidth * t,
         svg,

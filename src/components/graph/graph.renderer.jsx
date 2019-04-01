@@ -105,7 +105,16 @@ function _renderDefs() {
             return cachedDefs;
         }
 
-        const small = MARKER_SMALL_SIZE;
+        //NOTE: this is a step in trying to offset the arrow placement based on the size
+        // of the Node.  Because these defs are static if the node sizes change
+        // the arrow location will still be in the same spot.  Also if the node is
+        // rectangular or irregular sometimes it will be off.
+        const maxSize = Math.max(config.node.width, config.node.height) / 10 / 2 || config.node.size / 10 / 2;
+        const minSize = Math.min(config.node.width, config.node.height) / 10 / 2 || config.node.size / 10 / 2;
+
+        const maxCornerDistance = Math.sqrt(maxSize * maxSize + minSize * minSize) / 2;
+
+        const small = Math.max(maxCornerDistance, MARKER_SMALL_SIZE);
         const medium = small + (MARKER_MEDIUM_OFFSET * config.maxZoom) / 3;
         const large = small + (MARKER_LARGE_OFFSET * config.maxZoom) / 3;
 

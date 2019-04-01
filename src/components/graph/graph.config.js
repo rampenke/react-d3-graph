@@ -129,6 +129,8 @@
  * graph.
  * @param {number} [node.size=200] - 🔍🔍🔍 defines the size of all nodes.
  * @param {string} [node.strokeColor="none"] - 🔍🔍🔍  this is the stroke color that will be applied to the node if no **strokeColor property** is found inside the node itself (yes **you can pass a property "strokeColor" inside the node and that stroke color will override this default one** ).
+ * @param {number} [node.width=undefined] - 🔍🔍🔍 defines the width of all nodes - overrides the size property.
+ * @param {number} [node.height=undefined] - 🔍🔍🔍 defines the height of all nodes - overrides the size property.
  * @param {number} [node.strokeWidth=1.5] 🔍🔍🔍 - the width of the all node strokes.
  * @param {string} [node.svg=""] - 🔍🔍🔍 render custom svg for nodes in alternative to **node.symbolType**. This svg can
  * be provided as a string to either a remote svg resource or for a local one.
@@ -240,6 +242,8 @@ export default {
         opacity: 1,
         renderLabel: true,
         size: 200,
+        width: undefined,
+        height: undefined,
         strokeColor: "none",
         strokeWidth: 1.5,
         svg: "",
