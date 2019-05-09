@@ -10,6 +10,7 @@
         "dev": "cross-env NODE_ENV=dev webpack-dev-server --mode=development --content-base sandbox --config webpack.config.js --inline --hot --port 3002",
         "dist:rd3g": "rm -rf dist/ && webpack --config webpack.config.dist.js -p --display-modules --optimize-minimize",
         "dist:sandbox": "webpack --config webpack.config.js -p",
+        "dist:vcpublish": "webpack --config vcpublish.webpack.config.js -p",
         "dist:transpile": "./node_modules/babel-cli/bin/babel.js -d lib src",
         "dist": "npm run check && npm-run-all --parallel dist:*",
         "docs:lint": "node_modules/documentation/bin/documentation.js lint src/**/*.js",
@@ -24,10 +25,12 @@
         "lint": "npm run lint:src && npm run lint:test && npm run docs:lint",
         "precommit": "lint-staged",
         "start": "http-server ./sandbox/ -p 8888 -c-1",
+        "startvcpublish": "http-server ./vcpublish/ -p 8888 -c-1",
         "test:clean": "jest --no-cache --updateSnapshot --verbose --coverage --config jest.config.js",
         "test:watch": "jest --verbose --coverage --watchAll --config jest.config.js",
         "test": "jest --verbose --coverage --config jest.config.js",
-        "sandbox": "npm run dist:sandbox && npm run start"
+        "sandbox": "npm run dist:sandbox && npm run start",
+        "vcpublish": "npm run dist:vcpublish && npm run startvcpublish"
     },
     "lint-staged": {
         "*.{js,jsx,json,css,md}": [
