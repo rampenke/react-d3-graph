@@ -3,7 +3,7 @@
 import React from "react";
 
 import Form from "react-jsonschema-form";
-
+import { AccordionComponent, AccordionItemDirective, AccordionItemsDirective } from "@syncfusion/ej2-react-navigations";
 import "./styles.css";
 
 import defaultConfig from "../src/components/graph/graph.config";
@@ -12,8 +12,16 @@ import utils from "./utils";
 import reactD3GraphUtils from "../src/utils";
 import { JsonTree } from "react-editable-json-tree";
 
+import "./component-panel.css";
 const sandboxData = utils.loadDataset();
-
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemHeading,
+    AccordionItemButton,
+    AccordionItemPanel,
+} from "react-accessible-accordion";
+import "react-accessible-accordion/dist/fancy-example.css";
 /**
  * This is a sample integration of react-d3-graph, in this particular case all the rd3g config properties
  * will be exposed in a form in order to allow on the fly graph configuration.
@@ -22,6 +30,11 @@ const sandboxData = utils.loadDataset();
  * for instance to load the data and config under the `small` folder you just need to append "?data=small"
  * to the url when accessing the sandbox.
  */
+
+import { enableRipple } from "@syncfusion/ej2-base";
+
+enableRipple(true);
+
 export default class Sandbox extends React.Component {
     constructor(props) {
         super(props);
@@ -29,11 +42,43 @@ export default class Sandbox extends React.Component {
         const { config: configOverride, data, fullscreen } = sandboxData;
         const config = Object.assign(defaultConfig, configOverride);
         const schemaProps = utils.generateFormSchema(config, "", {});
+        const crntSchemaProps = utils.generateFormSchema(config, "", {});
 
         const schema = {
             type: "object",
             properties: schemaProps,
         };
+
+        const transcodeSchema = {
+            title: "Transcoder",
+            description: "Transcoder Properties.",
+            type: "object",
+            required: ["bitrate", "width", "height", "codec"],
+            properties: {
+                bitrate: {
+                    type: "integer",
+                    title: "bitrate",
+                    default: "20000000",
+                },
+                width: {
+                    type: "integer",
+                    title: "width",
+                    default: "1920",
+                },
+                height: {
+                    type: "integer",
+                    title: "height",
+                    default: "1080",
+                },
+                codec: {
+                    type: "string",
+                    title: "codec",
+                    default: "h264",
+                },
+            },
+        };
+
+        const crntSchema = transcodeSchema;
 
         const uiSchema = {
             height: { "ui:readonly": "true" },
@@ -41,11 +86,13 @@ export default class Sandbox extends React.Component {
         };
 
         this.uiSchema = uiSchema;
+        this.uicrntSchema = uiSchema;
 
         this.state = {
             config,
             generatedConfig: {},
             schema,
+            crntSchema,
             data,
             fullscreen,
         };
@@ -302,7 +349,42 @@ export default class Sandbox extends React.Component {
             </div>
         );
     };
-
+    buildComponentListPanel = () => {
+        return (
+            <Accordion>
+                <AccordionItem>
+                    <AccordionItemHeading>
+                        <AccordionItemButton>Input</AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                        <AccordionItemButton>RTMP</AccordionItemButton>
+                        <AccordionItemButton>RTSP</AccordionItemButton>
+                        <AccordionItemButton>File</AccordionItemButton>
+                    </AccordionItemPanel>
+                </AccordionItem>
+                <AccordionItem>
+                    <AccordionItemHeading>
+                        <AccordionItemButton>Transform</AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                        <AccordionItemButton>Transcode</AccordionItemButton>
+                        <AccordionItemButton>HLS</AccordionItemButton>
+                        <AccordionItemButton>Sync</AccordionItemButton>
+                    </AccordionItemPanel>
+                </AccordionItem>
+                <AccordionItem>
+                    <AccordionItemHeading>
+                        <AccordionItemButton>File</AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                        <AccordionItemButton>HTTP</AccordionItemButton>
+                        <AccordionItemButton>RTMP</AccordionItemButton>
+                        <AccordionItemButton>FILE</AccordionItemButton>
+                    </AccordionItemPanel>
+                </AccordionItem>
+            </Accordion>
+        );
+    };
     render() {
         // This does not happens in this sandbox scenario running time, but if we set staticGraph config
         // to true in the constructor we will provide nodes with initial positions
@@ -327,58 +409,36 @@ export default class Sandbox extends React.Component {
             onMouseOutLink: this.onMouseOutLink,
         };
 
-        
-            // @TODO: Only show configs that differ from default ones in "Your config" box
-            return (
-                <div className="container">
-                    <div className="container__main_menu">
-    
-                        <h3>Main</h3>
-                        <Form
-                            className="form-wrapper"
-                            schema={this.state.schema}
-                            uiSchema={this.uiSchema}
-                            onChange={this.refreshGraph}
-                            onSubmit={this.onSubmit}
-                        >
-                            <button className="invisible-button" type="submit" />
-                        </Form>
+        // @TODO: Only show configs that differ from default ones in "Your config" box
+        return (
+            <div className="container">
+                <div className="container__main_menu">
+                    <h3>Main</h3>
+                </div>
+                <div className="container__form_comp_list">
+                    <h3>Pipeline Components</h3>
+                    {this.buildComponentListPanel()}
+                </div>
+                <div className="container__graph">
+                    {this.buildCommonInteractionsPanel()}
+                    <div className="container__graph-area">
+                        <Graph ref="graph" {...graphProps} />
                     </div>
-                    <div className="container__form_comp_list">
-    
-                        <h3>Pipeline Components</h3>
-                        <Form
-                            className="form-wrapper"
-                            schema={this.state.schema}
-                            uiSchema={this.uiSchema}
-                            onChange={this.refreshGraph}
-                            onSubmit={this.onSubmit}
-                        >
-                            <button className="invisible-button" type="submit" />
-                        </Form>
-                    </div>
-                    <div className="container__graph">
-                        {this.buildCommonInteractionsPanel()}
-                        <div className="container__graph-area">
-                            <Graph ref="graph" {...graphProps} />
-                        </div>
-                    </div>
-                    <div className="container__form_comp_prop">
-   
-                        <h3>Component Properties</h3>
-                        <Form
-                            className="form-wrapper"
-                            schema={this.state.schema}
-                            uiSchema={this.uiSchema}
-                            onChange={this.refreshGraph}
-                            onSubmit={this.onSubmit}
-                        >
-                            <button className="invisible-button" type="submit" />
-                        </Form>
- 
-                    </div>
-                 </div>
-            );
+                </div>
+                <div className="container__form_comp_prop">
+                    <h3>Component Properties</h3>
+                    <Form
+                        className="form-wrapper"
+                        schema={this.state.crntSchema}
+                        uiSchema={this.uicrntSchema}
+                        onChange={this.refreshGraph}
+                        onSubmit={this.onSubmit}
+                    >
+                        <button className="invisible-button" type="submit" />
+                    </Form>
+                </div>
+            </div>
+        );
     }
 }
 

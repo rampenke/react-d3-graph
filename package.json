@@ -108,5 +108,12 @@
         "social-network-analysis",
         "social-network-graph",
         "visualization"
-    ]
+    ],
+    "dependencies": {
+        "@syncfusion/ej2-react-grids": "^17.1.44",
+        "@syncfusion/ej2-react-navigations": "^17.1.43",
+        "react-accessible-accordion": "^3.0.0",
+        "react-expandable-listview": "^0.6.1",
+        "react-motion": "^0.5.2"
+    }
 }
