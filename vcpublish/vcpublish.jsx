@@ -3,7 +3,6 @@
 import React from "react";
 
 import Form from "react-jsonschema-form";
-import { AccordionComponent, AccordionItemDirective, AccordionItemsDirective } from "@syncfusion/ej2-react-navigations";
 import "./styles.css";
 
 import defaultConfig from "../src/components/graph/graph.config";
@@ -21,7 +20,7 @@ import {
     AccordionItemButton,
     AccordionItemPanel,
 } from "react-accessible-accordion";
-import "react-accessible-accordion/dist/fancy-example.css";
+
 /**
  * This is a sample integration of react-d3-graph, in this particular case all the rd3g config properties
  * will be exposed in a form in order to allow on the fly graph configuration.
@@ -30,10 +29,6 @@ import "react-accessible-accordion/dist/fancy-example.css";
  * for instance to load the data and config under the `small` folder you just need to append "?data=small"
  * to the url when accessing the sandbox.
  */
-
-import { enableRipple } from "@syncfusion/ej2-base";
-
-enableRipple(true);
 
 export default class Sandbox extends React.Component {
     constructor(props) {
@@ -48,12 +43,26 @@ export default class Sandbox extends React.Component {
             type: "object",
             properties: schemaProps,
         };
+        this.compSelectInRtsp = this.compSelectInRtsp.bind(this);
+        this.compSelectInHls = this.compSelectInHls.bind(this);
+        this.compSelectInRtmp = this.compSelectInRtmp.bind(this);
+        this.compSelectInFile = this.compSelectInFile.bind(this);
 
-        const transcodeSchema = {
+        this.compSelectOutRtsp = this.compSelectOutRtsp.bind(this);
+        this.compSelectOutHls = this.compSelectOutHls.bind(this);
+        this.compSelectOutRtmp = this.compSelectOutRtmp.bind(this);
+        this.compSelectOutFile = this.compSelectOutFile.bind(this);
+        this.compSelectOutHttp = this.compSelectOutHttp.bind(this);
+
+        this.compSelectTranscoder = this.compSelectTranscoder.bind(this);
+        this.compSelectDistStore = this.compSelectDistStore.bind(this);
+        this.addComponent = this.addComponent.bind(this);
+
+        const TranscoderSchema = {
             title: "Transcoder",
             description: "Transcoder Properties.",
             type: "object",
-            required: ["bitrate", "width", "height", "codec"],
+            required: ["bitrate", "width", "height", "codec", "framerate"],
             properties: {
                 bitrate: {
                     type: "integer",
@@ -75,10 +84,150 @@ export default class Sandbox extends React.Component {
                     title: "codec",
                     default: "h264",
                 },
+                codec: {
+                    type: "integer",
+                    title: "framerate",
+                    default: "30.0",
+                },
             },
         };
 
-        const crntSchema = transcodeSchema;
+        const RtmpInSchema = {
+            title: "RTMP Input",
+            description: "RTMP Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "rtmp://127.0.0.1:1935/live/test1",
+                },
+            },
+        };
+        const RtspInSchema = {
+            title: "RTSP Input",
+            description: "RTSP Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "rtsp://127.0.0.1:554/live/test1",
+                },
+            },
+        };
+
+        const HlsInSchema = {
+            title: "HLS Input",
+            description: "HLS Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "http://127.0.0.1:8080/live/test1.m3u8",
+                },
+            },
+        };
+
+        const FileInSchema = {
+            title: "File Input",
+            description: "File Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "/mnt/media/TestStream.Mp4",
+                },
+            },
+        };
+
+        const RtmpOutSchema = {
+            title: "RTMP Input",
+            description: "RTMP Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "rtmp://127.0.0.1:1935/live/test1",
+                },
+            },
+        };
+        const RtspOutSchema = {
+            title: "RTSP Output",
+            description: "RTSP Output Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "rtsp://127.0.0.1:554/live/test1",
+                },
+            },
+        };
+
+        const HlsOutSchema = {
+            title: "HLS Output",
+            description: "HLS Output Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "http://127.0.0.1/live",
+                },
+            },
+        };
+        const HttpOutSchema = {
+            title: "HTTP Output",
+            description: "HTTP Output Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "http://127.0.0.1/live",
+                },
+            },
+        };
+        const FileOutSchema = {
+            title: "File Output",
+            description: "File Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "/mnt/media/TestStream.Mp4",
+                },
+            },
+        };
+
+        const DistStoreSchema = {
+            title: "Dist Store",
+            description: "Dist Store Properties.",
+            type: "object",
+            required: ["url"],
+            properties: {
+                url: {
+                    type: "string",
+                    title: "url",
+                    default: "ipfs://127.0.0.1/QmPXMA1oRtoT627YKaDPDQ4PwA8tdP9rWuAAweLzqSwAWT/test",
+                },
+            },
+        };
+        const crntSchema = TranscoderSchema;
 
         const uiSchema = {
             height: { "ui:readonly": "true" },
@@ -95,6 +244,18 @@ export default class Sandbox extends React.Component {
             crntSchema,
             data,
             fullscreen,
+            components: [
+                { id: "RTMP-IN", schema: RtmpInSchema },
+                { id: "RTSP-IN", schema: RtspInSchema },
+                { id: "HLS-IN", schema: HlsInSchema },
+                { id: "FILE-IN", schema: FileInSchema },
+                { id: "RTSP-OUT", schema: RtspOutSchema },
+                { id: "RTMP-OUT", schema: RtmpOutSchema },
+                { id: "FILE-OUT", schema: FileOutSchema },
+                { id: "HTTP-OUT", schema: HttpOutSchema },
+                { id: "TRANSCODER", schema: TranscoderSchema },
+                { id: "DISTSTORE", schema: DistStoreSchema },
+            ],
         };
     }
 
@@ -195,6 +356,39 @@ export default class Sandbox extends React.Component {
         }
     };
 
+    addComponent = compName => {
+        if (this.state.data.nodes && this.state.data.nodes.length) {
+            const maxIndex = this.state.data.nodes.length - 1;
+            const minIndex = 0;
+            let i = Math.floor(Math.random() * (maxIndex - minIndex + 1) + minIndex);
+            let nLinks = Math.floor(Math.random() * (5 - minIndex + 1) + minIndex);
+            const newNode = compName + ` ${this.state.data.nodes.length}`;
+
+            this.state.data.nodes.push({ id: newNode });
+
+            while (this.state.data.nodes[i] && this.state.data.nodes[i].id && nLinks) {
+                this.state.data.links.push({
+                    source: newNode,
+                    target: this.state.data.nodes[i].id,
+                });
+
+                i++;
+                nLinks--;
+            }
+
+            this.setState({
+                data: this.state.data,
+            });
+        } else {
+            // 1st node
+            const data = {
+                nodes: [{ id: compName + " 1" }],
+                links: [],
+            };
+
+            this.setState({ data });
+        }
+    };
     /**
      * Remove a node.
      */
@@ -349,37 +543,153 @@ export default class Sandbox extends React.Component {
             </div>
         );
     };
+
+    compSelectInRtmp = () => {
+        console.info("Clicked InRtmp");
+        this.addComponent("RTMP-In");
+        var index = this.state.components.findIndex(x => x.id === "RTMP-IN");
+        this.state.crntSchema = this.state.components[index].schema;
+        //this.setState({crntSchema: RtmpInSchema});
+    };
+    compSelectInRtsp = () => {
+        console.info("Clicked InRtsp");
+        this.addComponent("RTSP-In");
+        var index = this.state.components.findIndex(x => x.id === "RTSP-IN");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+    compSelectInFile = () => {
+        console.info("Clicked InFile");
+        this.addComponent("File-In");
+        var index = this.state.components.findIndex(x => x.id === "FILE-IN");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+    compSelectInHls = () => {
+        console.info("Clicked InHls");
+        this.addComponent("HLS-In");
+        var index = this.state.components.findIndex(x => x.id === "HLS-IN");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+
+    compSelectOutRtmp = () => {
+        console.info("Clicked OutRtmp");
+        this.addComponent("RTMP-Out");
+        var index = this.state.components.findIndex(x => x.id === "RTMP-OUT");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+    compSelectOutRtsp = () => {
+        console.info("Clicked OutRtsp");
+        this.addComponent("RTSP-Out");
+        var index = this.state.components.findIndex(x => x.id === "RTSP-OUT");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+    compSelectOutFile = () => {
+        console.info("Clicked RTMP");
+        this.addComponent("File-Out");
+        var index = this.state.components.findIndex(x => x.id === "FILE-OUT");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+    compSelectOutHls = () => {
+        console.info("Clicked OutHls");
+        this.addComponent("HLS-Out");
+        var index = this.state.components.findIndex(x => x.id === "HLS-OUT");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+    compSelectOutHttp = () => {
+        console.info("Clicked Http ");
+        this.addComponent("HTTP-Out");
+        var index = this.state.components.findIndex(x => x.id === "HTTP-OUT");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+
+    compSelectTranscoder = () => {
+        console.info("Clicked Transcoder");
+        this.addComponent("Transcoder");
+        var index = this.state.components.findIndex(x => x.id === "TRANSCODER");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+    compSelectDistStore = () => {
+        console.info("Clicked DistStore");
+        this.addComponent("DistStore");
+        var index = this.state.components.findIndex(x => x.id === "DISTSTORE");
+        this.state.crntSchema = this.state.components[index].schema;
+    };
+
     buildComponentListPanel = () => {
         return (
             <Accordion>
                 <AccordionItem>
                     <AccordionItemHeading>
-                        <AccordionItemButton>Input</AccordionItemButton>
+                        <AccordionItemButton>Inputs</AccordionItemButton>
                     </AccordionItemHeading>
                     <AccordionItemPanel>
-                        <AccordionItemButton>RTMP</AccordionItemButton>
-                        <AccordionItemButton>RTSP</AccordionItemButton>
-                        <AccordionItemButton>File</AccordionItemButton>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectInRtmp}>
+                                RTMP
+                            </button>
+                        </div>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectInRtsp}>
+                                RTSP
+                            </button>
+                        </div>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectInFile}>
+                                File
+                            </button>
+                        </div>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectInHls}>
+                                HLS
+                            </button>
+                        </div>
                     </AccordionItemPanel>
                 </AccordionItem>
                 <AccordionItem>
                     <AccordionItemHeading>
-                        <AccordionItemButton>Transform</AccordionItemButton>
+                        <AccordionItemButton>Transcoder</AccordionItemButton>
                     </AccordionItemHeading>
                     <AccordionItemPanel>
-                        <AccordionItemButton>Transcode</AccordionItemButton>
-                        <AccordionItemButton>HLS</AccordionItemButton>
-                        <AccordionItemButton>Sync</AccordionItemButton>
+                        <button onClick={this.compSelectTranscoder}>Transcoder</button>
                     </AccordionItemPanel>
                 </AccordionItem>
                 <AccordionItem>
                     <AccordionItemHeading>
-                        <AccordionItemButton>File</AccordionItemButton>
+                        <AccordionItemButton>Distributed Storage</AccordionItemButton>
                     </AccordionItemHeading>
                     <AccordionItemPanel>
-                        <AccordionItemButton>HTTP</AccordionItemButton>
-                        <AccordionItemButton>RTMP</AccordionItemButton>
-                        <AccordionItemButton>FILE</AccordionItemButton>
+                        <button onClick={this.compSelectDistStore}>Distributed Storage</button>
+                    </AccordionItemPanel>
+                </AccordionItem>
+                <AccordionItem>
+                    <AccordionItemHeading>
+                        <AccordionItemButton>Outputs</AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectOutHls}>
+                                HLS
+                            </button>
+                        </div>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectOutHttp}>
+                                HTTP
+                            </button>
+                        </div>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectOutRtmp}>
+                                RTMP
+                            </button>
+                        </div>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectOutRtsp}>
+                                RTSP
+                            </button>
+                        </div>
+                        <div>
+                            <button className="comp-button" onClick={this.compSelectOutFile}>
+                                File
+                            </button>
+                        </div>
                     </AccordionItemPanel>
                 </AccordionItem>
             </Accordion>
