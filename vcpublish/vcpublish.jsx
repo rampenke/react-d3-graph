@@ -244,7 +244,7 @@ export default class Sandbox extends React.Component {
             crntSchema,
             data,
             fullscreen,
-            components: [
+            compSchemas: [
                 { id: "RTMP-IN", schema: RtmpInSchema },
                 { id: "RTSP-IN", schema: RtspInSchema },
                 { id: "HLS-IN", schema: HlsInSchema },
@@ -264,12 +264,21 @@ export default class Sandbox extends React.Component {
     onClickNode = id => {
         !this.state.config.collapsible && window.alert(`Clicked node ${id}`);
         // NOTE: below sample implementation for focusAnimation when clicking on node
-        // this.setState({
-        //     data: {
-        //         ...this.state.data,
-        //         focusedNodeId: this.state.data.focusedNodeId !== id ? id : null
-        //     }
-        // });
+        this.setState({
+            data: {
+                ...this.state.data,
+                focusedNodeId: this.state.data.focusedNodeId !== id ? id : null,
+            },
+        });
+
+        var idx = this.state.data.nodes.findIndex(x => x.id === id);
+        if (idx != null) {
+            var node = this.state.data.nodes[idx];
+            if (node != null && node.compName != null) {
+                var cidx = this.state.compSchemas.findIndex(x => x.id === node.compName);
+                this.state.crntSchema = this.state.compSchemas[cidx].schema;
+            }
+        }
     };
 
     onRightClickNode = (event, id) => {
@@ -364,8 +373,8 @@ export default class Sandbox extends React.Component {
             let nLinks = Math.floor(Math.random() * (5 - minIndex + 1) + minIndex);
             const newNode = compName + ` ${this.state.data.nodes.length}`;
 
-            this.state.data.nodes.push({ id: newNode });
-
+            this.state.data.nodes.push({ id: newNode, compName: compName });
+            /*
             while (this.state.data.nodes[i] && this.state.data.nodes[i].id && nLinks) {
                 this.state.data.links.push({
                     source: newNode,
@@ -375,7 +384,13 @@ export default class Sandbox extends React.Component {
                 i++;
                 nLinks--;
             }
-
+*/
+            if (this.state.data.focusedNodeId != null) {
+                this.state.data.links.push({
+                    source: this.state.data.focusedNodeId,
+                    target: newNode,
+                });
+            }
             this.setState({
                 data: this.state.data,
             });
@@ -387,6 +402,10 @@ export default class Sandbox extends React.Component {
             };
 
             this.setState({ data });
+        }
+        var index = this.state.compSchemas.findIndex(x => x.id === compName);
+        if (index != null) {
+            this.state.crntSchema = this.state.compSchemas[index].schema;
         }
     };
     /**
@@ -506,7 +525,6 @@ export default class Sandbox extends React.Component {
 
         return (
             <div>
-                {fullscreen}
                 <button
                     onClick={this.restartGraphSimulation}
                     className="btn btn-default btn-margin-left"
@@ -546,72 +564,50 @@ export default class Sandbox extends React.Component {
 
     compSelectInRtmp = () => {
         console.info("Clicked InRtmp");
-        this.addComponent("RTMP-In");
-        var index = this.state.components.findIndex(x => x.id === "RTMP-IN");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("RTMP-IN");
         //this.setState({crntSchema: RtmpInSchema});
     };
     compSelectInRtsp = () => {
         console.info("Clicked InRtsp");
-        this.addComponent("RTSP-In");
-        var index = this.state.components.findIndex(x => x.id === "RTSP-IN");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("RTSP-IN");
     };
     compSelectInFile = () => {
         console.info("Clicked InFile");
-        this.addComponent("File-In");
-        var index = this.state.components.findIndex(x => x.id === "FILE-IN");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("FILE-IN");
     };
     compSelectInHls = () => {
         console.info("Clicked InHls");
-        this.addComponent("HLS-In");
-        var index = this.state.components.findIndex(x => x.id === "HLS-IN");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("HLS-IN");
     };
 
     compSelectOutRtmp = () => {
         console.info("Clicked OutRtmp");
-        this.addComponent("RTMP-Out");
-        var index = this.state.components.findIndex(x => x.id === "RTMP-OUT");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("RTMP-OUT");
     };
     compSelectOutRtsp = () => {
         console.info("Clicked OutRtsp");
-        this.addComponent("RTSP-Out");
-        var index = this.state.components.findIndex(x => x.id === "RTSP-OUT");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("RTSP-OUT");
     };
     compSelectOutFile = () => {
         console.info("Clicked RTMP");
-        this.addComponent("File-Out");
-        var index = this.state.components.findIndex(x => x.id === "FILE-OUT");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("File-OUT");
     };
     compSelectOutHls = () => {
         console.info("Clicked OutHls");
-        this.addComponent("HLS-Out");
-        var index = this.state.components.findIndex(x => x.id === "HLS-OUT");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("HLS-OUT");
     };
     compSelectOutHttp = () => {
         console.info("Clicked Http ");
-        this.addComponent("HTTP-Out");
-        var index = this.state.components.findIndex(x => x.id === "HTTP-OUT");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("HTTP-OUT");
     };
 
     compSelectTranscoder = () => {
         console.info("Clicked Transcoder");
-        this.addComponent("Transcoder");
-        var index = this.state.components.findIndex(x => x.id === "TRANSCODER");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("TRANSCODER");
     };
     compSelectDistStore = () => {
         console.info("Clicked DistStore");
-        this.addComponent("DistStore");
-        var index = this.state.components.findIndex(x => x.id === "DISTSTORE");
-        this.state.crntSchema = this.state.components[index].schema;
+        this.addComponent("DISTSTORE");
     };
 
     buildComponentListPanel = () => {

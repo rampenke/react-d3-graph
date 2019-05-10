@@ -66,7 +66,7 @@ function loadDataset() {
         }
     }
 
-    const config = {};
+    const config = { highlightDegree: 0, directed: true, nodeHighlightBehavior: true };
     const data = require("./data/default");
 
     return {
