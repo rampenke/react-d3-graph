@@ -256,20 +256,22 @@ export default class Sandbox extends React.Component {
                 { id: "TRANSCODER", schema: TranscoderSchema },
                 { id: "DISTSTORE", schema: DistStoreSchema },
             ],
+            opMode: "None",
+            prevSelNode: null,
         };
     }
 
     onClickGraph = () => console.info("Clicked the graph");
 
     onClickNode = id => {
-        !this.state.config.collapsible && window.alert(`Clicked node ${id}`);
+        //!this.state.config.collapsible && window.alert(`Clicked node ${id}`);
         // NOTE: below sample implementation for focusAnimation when clicking on node
-        this.setState({
-            data: {
-                ...this.state.data,
-                focusedNodeId: this.state.data.focusedNodeId !== id ? id : null,
-            },
-        });
+        //this.setState({
+        //    data: {
+        //        ...this.state.data,
+        //        focusedNodeId: this.state.data.focusedNodeId !== id ? id : null,
+        //    },
+        //});
 
         var idx = this.state.data.nodes.findIndex(x => x.id === id);
         if (idx != null) {
@@ -277,6 +279,20 @@ export default class Sandbox extends React.Component {
             if (node != null && node.compName != null) {
                 var cidx = this.state.compSchemas.findIndex(x => x.id === node.compName);
                 this.state.crntSchema = this.state.compSchemas[cidx].schema;
+            }
+            if (this.state.opMode == "CONNODE") {
+                if (this.state.prevSelNode == null) {
+                    this.setState({ prevSelNode: id });
+                } else {
+                    this.state.data.links.push({
+                        source: this.state.prevSelNode,
+                        target: id,
+                    });
+                    this.setState({
+                        data: this.state.data,
+                        prevSelNode: null,
+                    });
+                }
             }
         }
     };
@@ -315,13 +331,22 @@ export default class Sandbox extends React.Component {
     /**
      * Play stopped animations.
      */
-    restartGraphSimulation = () => this.refs.graph.restartSimulation();
+    //restartGraphSimulation = () => this.refs.graph.restartSimulation();
 
     /**
      * Pause ongoing animations.
      */
-    pauseGraphSimulation = () => this.refs.graph.pauseSimulation();
-
+    //pauseGraphSimulation = () => this.refs.graph.pauseSimulation();
+    connectNodes = () => {
+        this.state.opMode = "CONNODE";
+        this.setState({ prevSelNode: null });
+    };
+    deleteConnection = () => {
+        this.state.opMode = "DELCON";
+    };
+    deleteNode = () => {
+        this.state.opMode = "DELNODE";
+    };
     /**
      * If you have moved nodes you will have them restore theirs positions
      * when you call resetNodesPositions.
@@ -385,12 +410,6 @@ export default class Sandbox extends React.Component {
                 nLinks--;
             }
 */
-            if (this.state.data.focusedNodeId != null) {
-                this.state.data.links.push({
-                    source: this.state.data.focusedNodeId,
-                    target: newNode,
-                });
-            }
             this.setState({
                 data: this.state.data,
             });
@@ -525,35 +544,14 @@ export default class Sandbox extends React.Component {
 
         return (
             <div>
-                <button
-                    onClick={this.restartGraphSimulation}
-                    className="btn btn-default btn-margin-left"
-                    style={btnStyle}
-                    disabled={this.state.config.staticGraph}
-                >
-                    ▶️
+                <button onClick={this.connectNodes} className="btn btn-default btn-margin-left" style={btnStyle}>
+                    Connect
                 </button>
-                <button
-                    onClick={this.pauseGraphSimulation}
-                    className="btn btn-default btn-margin-left"
-                    style={btnStyle}
-                    disabled={this.state.config.staticGraph}
-                >
-                    ⏸️
+                <button onClick={this.deleteConnection} className="btn btn-default btn-margin-left" style={btnStyle}>
+                    Delete
                 </button>
-                <button
-                    onClick={this.resetNodesPositions}
-                    className="btn btn-default btn-margin-left"
-                    style={btnStyle}
-                    disabled={this.state.config.staticGraph}
-                >
-                    Unstick nodes
-                </button>
-                <button onClick={this.onClickAddNode} className="btn btn-default btn-margin-left">
-                    +
-                </button>
-                <button onClick={this.onClickRemoveNode} className="btn btn-default btn-margin-left">
-                    -
+                <button onClick={this.deleteNode} className="btn btn-default btn-margin-left" style={btnStyle}>
+                    Del Con
                 </button>
                 <span className="container__graph-info">
                     <b>Nodes: </b> {this.state.data.nodes.length} | <b>Links: </b> {this.state.data.links.length}

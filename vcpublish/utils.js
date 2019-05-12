@@ -43,37 +43,15 @@ function generateFormSchema(o, rootSpreadProp, accum = {}) {
 }
 
 function loadDataset() {
-    const queryParams = queryString.parse(location.search);
-    let fullscreen = false;
+    try {
+        const data = require(`./data/node.data`);
+        const datasetConfig = require(`./data/node.config`);
+        const config = utils.merge(DEFAULT_CONFIG, datasetConfig);
 
-    if (queryParams && queryParams.fullscreen) {
-        fullscreen = new Boolean(queryParams.fullscreen);
+        return { data, config };
+    } catch (error) {
+        console.warn(`dataset not found, make sure it is present in /data/`);
     }
-
-    if (queryParams && queryParams.data) {
-        const dataset = queryParams.data.toLowerCase();
-
-        try {
-            const data = require(`./data/${dataset}/${dataset}.data`);
-            const datasetConfig = require(`./data/${dataset}/${dataset}.config`);
-            const config = utils.merge(DEFAULT_CONFIG, datasetConfig);
-
-            return { data, config, fullscreen };
-        } catch (error) {
-            console.warn(
-                `dataset with name ${dataset} not found, falling back to default, make sure it is a valid dataset`
-            );
-        }
-    }
-
-    const config = { highlightDegree: 0, directed: true, nodeHighlightBehavior: true };
-    const data = require("./data/default");
-
-    return {
-        config,
-        data,
-        fullscreen,
-    };
 }
 
 function setValue(obj, access, value) {
