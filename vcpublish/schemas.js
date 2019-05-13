@@ -1,21 +1,20 @@
 export const TranscoderSchema = {
     title: "Transcoder",
-    description: "Transcoder Properties.",
     type: "object",
     required: ["bitrate", "width", "height", "codec", "framerate"],
     properties: {
         bitrate: {
-            type: "integer",
+            type: "string",
             title: "bitrate",
             default: "20000000",
         },
         width: {
-            type: "integer",
+            type: "string",
             title: "width",
             default: "1920",
         },
         height: {
-            type: "integer",
+            type: "string",
             title: "height",
             default: "1080",
         },
@@ -25,7 +24,7 @@ export const TranscoderSchema = {
             default: "h264",
         },
         codec: {
-            type: "integer",
+            type: "string",
             title: "framerate",
             default: "30.0",
         },
@@ -34,7 +33,6 @@ export const TranscoderSchema = {
 
 export const RtmpInSchema = {
     title: "RTMP Input",
-    description: "RTMP Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -48,7 +46,6 @@ export const RtmpInSchema = {
 
 export const RtspInSchema = {
     title: "RTSP Input",
-    description: "RTSP Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -62,7 +59,6 @@ export const RtspInSchema = {
 
 export const HlsInSchema = {
     title: "HLS Input",
-    description: "HLS Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -76,7 +72,6 @@ export const HlsInSchema = {
 
 export const FileInSchema = {
     title: "File Input",
-    description: "File Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -90,7 +85,6 @@ export const FileInSchema = {
 
 export const RtmpOutSchema = {
     title: "RTMP Input",
-    description: "RTMP Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -104,7 +98,6 @@ export const RtmpOutSchema = {
 
 export const RtspOutSchema = {
     title: "RTSP Output",
-    description: "RTSP Output Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -118,7 +111,6 @@ export const RtspOutSchema = {
 
 export const HlsOutSchema = {
     title: "HLS Output",
-    description: "HLS Output Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -145,7 +137,6 @@ export const HttpOutSchema = {
 
 export const FileOutSchema = {
     title: "File Output",
-    description: "File Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -159,7 +150,6 @@ export const FileOutSchema = {
 
 export const DistStoreSchema = {
     title: "Dist Store",
-    description: "Dist Store Properties.",
     type: "object",
     required: ["url"],
     properties: {
@@ -173,7 +163,6 @@ export const DistStoreSchema = {
 
 export const SettingsSchema = {
     title: "FFMPEG Settings",
-    description: "FFMPEG Settings",
     type: "object",
     required: [],
     properties: {

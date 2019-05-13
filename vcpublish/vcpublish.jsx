@@ -93,6 +93,7 @@ export default class Sandbox extends React.Component {
             ],
             opMode: "None",
             prevSelNode: null,
+            editNode: null,
         };
     }
 
@@ -133,7 +134,7 @@ export default class Sandbox extends React.Component {
                 if (node != null && node.name != null) {
                     var schemeidx = this.state.compSchemas.findIndex(x => x.id === node.name);
                     this.state.crntSchema = this.state.compSchemas[schemeidx].schema;
-                    this.setState({ crntSchema: this.state.crntSchema });
+                    this.setState({ crntSchema: this.state.crntSchema, editNode: id });
                 }
             }
         }
@@ -206,20 +207,11 @@ export default class Sandbox extends React.Component {
             let nLinks = Math.floor(Math.random() * (5 - minIndex + 1) + minIndex);
             const newNode = name + ` ${this.state.data.nodes.length}`;
 
-            this.state.data.nodes.push({ id: newNode, name: name, categoy: categoy });
-            /*
-            while (this.state.data.nodes[i] && this.state.data.nodes[i].id && nLinks) {
-                this.state.data.links.push({
-                    source: newNode,
-                    target: this.state.data.nodes[i].id,
-                });
+            this.state.data.nodes.push({ id: newNode, name: name, categoy: categoy, formData: null });
 
-                i++;
-                nLinks--;
-            }
-*/
             this.setState({
                 data: this.state.data,
+                editNode: newNode,
             });
         } else {
             // 1st node
@@ -228,7 +220,7 @@ export default class Sandbox extends React.Component {
                 links: [],
             };
 
-            this.setState({ data });
+            this.setState({ data, editNode: newNode });
         }
         var index = this.state.compSchemas.findIndex(x => x.id === name);
         if (index != null) {
@@ -251,23 +243,40 @@ export default class Sandbox extends React.Component {
         return { config, schemaPropsValues };
     };
 
-    refreshGraph = data => {
-        const { config, schemaPropsValues } = this._buildGraphConfig(data);
+    _buildFormConfig = data => {
+        let config = {};
+        let schemaPropsValues = {};
 
-        this.state.schema.properties = reactD3GraphUtils.merge(this.state.schema.properties, schemaPropsValues);
+        for (let k of Object.keys(data.formData)) {
+            // Set value mapping correctly for config object of react-d3-graph
+            utils.setValue(config, k, data.formData[k]);
+            // Set new values for schema of jsonform
+            schemaPropsValues[k] = {};
+            schemaPropsValues[k]["default"] = data.formData[k];
+        }
 
-        this.setState({
-            config,
-        });
+        return { config, schemaPropsValues };
     };
+
+    onFormChange = data => {};
 
     /**
      * Generate graph configuration file ready to use!
      */
-    onSubmit = data => {
-        const { config } = this._buildGraphConfig(data);
+    //onSubmit = data => {
+    //    const { config } = this._buildGraphConfig(data);
+    //
+    //    this.setState({ generatedConfig: config });
+    //};
 
-        this.setState({ generatedConfig: config });
+    onSubmit = data => {
+        if (this.state.editNode != null) {
+            var idx = this.state.data.nodes.findIndex(x => x.id === this.state.editNode);
+            if (idx != null) {
+                this.state.data.nodes[idx].formData = data;
+                this.setState({ data: this.state.data });
+            }
+        }
     };
 
     onClickSubmit = () => {
@@ -489,7 +498,13 @@ export default class Sandbox extends React.Component {
             links: this.state.data.links,
             focusedNodeId: this.state.data.focusedNodeId,
         };
-
+        var formData = null;
+        if (this.state.editNode != null) {
+            var idx = this.state.data.nodes.findIndex(x => x.id === this.state.editNode);
+            if (idx > 0) {
+                formData = this.state.data.nodes[idx].formData;
+            }
+        }
         const graphProps = {
             id: "graph",
             data,
@@ -506,6 +521,7 @@ export default class Sandbox extends React.Component {
         };
 
         // @TODO: Only show configs that differ from default ones in "Your config" box
+
         return (
             <div className="container">
                 <div className="container__main_menu">
@@ -527,10 +543,11 @@ export default class Sandbox extends React.Component {
                         className="form-wrapper"
                         schema={this.state.crntSchema}
                         uiSchema={this.uicrntSchema}
+                        formData={formData}
                         onChange={this.refreshGraph}
                         onSubmit={this.onSubmit}
                     >
-                        <button className="invisible-button" type="submit" />
+                        <button className="submit-button" type="submit" />
                     </Form>
                 </div>
             </div>
