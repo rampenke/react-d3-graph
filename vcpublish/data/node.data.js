@@ -1,16 +1,16 @@
 module.exports = {
     links: [
         {
-            source: "ROOT",
-            target: "ROOT",
+            source: "SETTINGS",
+            target: "SETTINGS",
         },
     ],
     nodes: [
         {
-            id: "ROOT",
-            name: "ROOT",
-            type: "transcode",
-            isCloud: true,
+            id: "SETTINGS",
+            name: "SETTINGS",
+            type: "settings",
+            isCloud: false,
         },
     ],
 };

@@ -21,6 +21,8 @@ import {
     AccordionItemPanel,
 } from "react-accessible-accordion";
 
+import * as schemas from "./schemas";
+
 /**
  * This is a sample integration of react-d3-graph, in this particular case all the rd3g config properties
  * will be exposed in a form in order to allow on the fly graph configuration.
@@ -58,176 +60,7 @@ export default class Sandbox extends React.Component {
         this.compSelectDistStore = this.compSelectDistStore.bind(this);
         this.addComponent = this.addComponent.bind(this);
 
-        const TranscoderSchema = {
-            title: "Transcoder",
-            description: "Transcoder Properties.",
-            type: "object",
-            required: ["bitrate", "width", "height", "codec", "framerate"],
-            properties: {
-                bitrate: {
-                    type: "integer",
-                    title: "bitrate",
-                    default: "20000000",
-                },
-                width: {
-                    type: "integer",
-                    title: "width",
-                    default: "1920",
-                },
-                height: {
-                    type: "integer",
-                    title: "height",
-                    default: "1080",
-                },
-                codec: {
-                    type: "string",
-                    title: "codec",
-                    default: "h264",
-                },
-                codec: {
-                    type: "integer",
-                    title: "framerate",
-                    default: "30.0",
-                },
-            },
-        };
-
-        const RtmpInSchema = {
-            title: "RTMP Input",
-            description: "RTMP Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "rtmp://127.0.0.1:1935/live/test1",
-                },
-            },
-        };
-        const RtspInSchema = {
-            title: "RTSP Input",
-            description: "RTSP Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "rtsp://127.0.0.1:554/live/test1",
-                },
-            },
-        };
-
-        const HlsInSchema = {
-            title: "HLS Input",
-            description: "HLS Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "http://127.0.0.1:8080/live/test1.m3u8",
-                },
-            },
-        };
-
-        const FileInSchema = {
-            title: "File Input",
-            description: "File Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "/mnt/media/TestStream.Mp4",
-                },
-            },
-        };
-
-        const RtmpOutSchema = {
-            title: "RTMP Input",
-            description: "RTMP Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "rtmp://127.0.0.1:1935/live/test1",
-                },
-            },
-        };
-        const RtspOutSchema = {
-            title: "RTSP Output",
-            description: "RTSP Output Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "rtsp://127.0.0.1:554/live/test1",
-                },
-            },
-        };
-
-        const HlsOutSchema = {
-            title: "HLS Output",
-            description: "HLS Output Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "http://127.0.0.1/live",
-                },
-            },
-        };
-        const HttpOutSchema = {
-            title: "HTTP Output",
-            description: "HTTP Output Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "http://127.0.0.1/live",
-                },
-            },
-        };
-        const FileOutSchema = {
-            title: "File Output",
-            description: "File Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "/mnt/media/TestStream.Mp4",
-                },
-            },
-        };
-
-        const DistStoreSchema = {
-            title: "Dist Store",
-            description: "Dist Store Properties.",
-            type: "object",
-            required: ["url"],
-            properties: {
-                url: {
-                    type: "string",
-                    title: "url",
-                    default: "ipfs://127.0.0.1/QmPXMA1oRtoT627YKaDPDQ4PwA8tdP9rWuAAweLzqSwAWT/test",
-                },
-            },
-        };
-        const crntSchema = TranscoderSchema;
+        const crntSchema = schemas.TranscoderSchema;
 
         const uiSchema = {
             height: { "ui:readonly": "true" },
@@ -245,16 +78,18 @@ export default class Sandbox extends React.Component {
             data,
             fullscreen,
             compSchemas: [
-                { id: "RTMP-IN", schema: RtmpInSchema },
-                { id: "RTSP-IN", schema: RtspInSchema },
-                { id: "HLS-IN", schema: HlsInSchema },
-                { id: "FILE-IN", schema: FileInSchema },
-                { id: "RTSP-OUT", schema: RtspOutSchema },
-                { id: "RTMP-OUT", schema: RtmpOutSchema },
-                { id: "FILE-OUT", schema: FileOutSchema },
-                { id: "HTTP-OUT", schema: HttpOutSchema },
-                { id: "TRANSCODER", schema: TranscoderSchema },
-                { id: "DISTSTORE", schema: DistStoreSchema },
+                { id: "RTMP-IN", schema: schemas.RtmpInSchema },
+                { id: "RTSP-IN", schema: schemas.RtspInSchema },
+                { id: "HLS-IN", schema: schemas.HlsInSchema },
+                { id: "FILE-IN", schema: schemas.FileInSchema },
+                { id: "RTSP-OUT", schema: schemas.RtspOutSchema },
+                { id: "RTMP-OUT", schema: schemas.RtmpOutSchema },
+                { id: "FILE-OUT", schema: schemas.FileOutSchema },
+                { id: "HLS-OUT", schema: schemas.HlsOutSchema },
+                { id: "HTTP-OUT", schema: schemas.HttpOutSchema },
+                { id: "TRANSCODER", schema: schemas.TranscoderSchema },
+                { id: "DISTSTORE", schema: schemas.DistStoreSchema },
+                { id: "SETTINGS", schema: schemas.SettingsSchema },
             ],
             opMode: "None",
             prevSelNode: null,
@@ -276,10 +111,7 @@ export default class Sandbox extends React.Component {
         var idx = this.state.data.nodes.findIndex(x => x.id === id);
         if (idx != null) {
             var node = this.state.data.nodes[idx];
-            if (node != null && node.compName != null) {
-                var cidx = this.state.compSchemas.findIndex(x => x.id === node.compName);
-                this.state.crntSchema = this.state.compSchemas[cidx].schema;
-            }
+
             if (this.state.opMode == "CONNODE") {
                 if (this.state.prevSelNode == null) {
                     this.setState({ prevSelNode: id });
@@ -288,10 +120,20 @@ export default class Sandbox extends React.Component {
                         source: this.state.prevSelNode,
                         target: id,
                     });
-                    this.setState({
-                        data: this.state.data,
-                        prevSelNode: null,
-                    });
+                    this.setState({ data: this.state.data, prevSelNode: null });
+                }
+            } else if (this.state.opMode == "DELNODE") {
+                if (node.name != "SETTINGS") {
+                    this.state.data.nodes.splice(idx, 1);
+                    const links = this.state.data.links.filter(l => l.source !== id && l.target !== id);
+                    const data = { nodes: this.state.data.nodes, links };
+                    this.setState({ data: this.state.data });
+                }
+            } else if (this.state.opMode == "SETPROP") {
+                if (node != null && node.name != null) {
+                    var schemeidx = this.state.compSchemas.findIndex(x => x.id === node.name);
+                    this.state.crntSchema = this.state.compSchemas[schemeidx].schema;
+                    this.setState({ crntSchema: this.state.crntSchema });
                 }
             }
         }
@@ -302,7 +144,14 @@ export default class Sandbox extends React.Component {
         window.alert(`RIGHT clicked node ${id}`);
     };
 
-    onClickLink = (source, target) => window.alert(`Clicked link between ${source} and ${target}`);
+    onClickLink = (source, target) => {
+        window.alert(`Clicked link between ${source} and ${target}`);
+        if (this.state.opMode == "DELCON") {
+            const links = this.state.data.links.filter(l => l.source !== source && l.target !== target);
+            const data = { nodes: this.state.data.nodes, links };
+            this.setState({ data });
+        }
+    };
 
     onRightClickLink = (event, source, target) => {
         event.preventDefault();
@@ -328,77 +177,36 @@ export default class Sandbox extends React.Component {
         this.setState({ fullscreen });
     };
 
-    /**
-     * Play stopped animations.
-     */
-    //restartGraphSimulation = () => this.refs.graph.restartSimulation();
-
-    /**
-     * Pause ongoing animations.
-     */
-    //pauseGraphSimulation = () => this.refs.graph.pauseSimulation();
     connectNodes = () => {
-        this.state.opMode = "CONNODE";
-        this.setState({ prevSelNode: null });
+        //this.state.opMode = "CONNODE";
+        this.setState({ opMode: "CONNODE", prevSelNode: null });
     };
     deleteConnection = () => {
-        this.state.opMode = "DELCON";
+        //this.state.opMode = "DELCON";
+        this.setState({ opMode: "DELCON", prevSelNode: null });
     };
     deleteNode = () => {
         this.state.opMode = "DELNODE";
     };
+    setProp = () => {
+        this.setState({ opMode: "SETPROP", prevSelNode: null });
+    };
+
     /**
      * If you have moved nodes you will have them restore theirs positions
      * when you call resetNodesPositions.
      */
     resetNodesPositions = () => this.refs.graph.resetNodesPositions();
 
-    /**
-     * Append a new node with some randomness.
-     */
-    onClickAddNode = () => {
+    addComponent = (name, categoy) => {
         if (this.state.data.nodes && this.state.data.nodes.length) {
             const maxIndex = this.state.data.nodes.length - 1;
             const minIndex = 0;
             let i = Math.floor(Math.random() * (maxIndex - minIndex + 1) + minIndex);
             let nLinks = Math.floor(Math.random() * (5 - minIndex + 1) + minIndex);
-            const newNode = `Node ${this.state.data.nodes.length}`;
+            const newNode = name + ` ${this.state.data.nodes.length}`;
 
-            this.state.data.nodes.push({ id: newNode });
-
-            while (this.state.data.nodes[i] && this.state.data.nodes[i].id && nLinks) {
-                this.state.data.links.push({
-                    source: newNode,
-                    target: this.state.data.nodes[i].id,
-                });
-
-                i++;
-                nLinks--;
-            }
-
-            this.setState({
-                data: this.state.data,
-            });
-        } else {
-            // 1st node
-            const data = {
-                nodes: [{ id: "Node 1" }],
-                links: [],
-            };
-
-            this.setState({ data });
-        }
-    };
-
-    addComponent = compName => {
-        if (this.state.data.nodes && this.state.data.nodes.length) {
-            const maxIndex = this.state.data.nodes.length - 1;
-            const minIndex = 0;
-            let i = Math.floor(Math.random() * (maxIndex - minIndex + 1) + minIndex);
-            let nLinks = Math.floor(Math.random() * (5 - minIndex + 1) + minIndex);
-            const newNode = compName + ` ${this.state.data.nodes.length}`;
-
-            this.state.data.nodes.push({ id: newNode, compName: compName });
+            this.state.data.nodes.push({ id: newNode, name: name, categoy: categoy });
             /*
             while (this.state.data.nodes[i] && this.state.data.nodes[i].id && nLinks) {
                 this.state.data.links.push({
@@ -416,31 +224,15 @@ export default class Sandbox extends React.Component {
         } else {
             // 1st node
             const data = {
-                nodes: [{ id: compName + " 1" }],
+                nodes: [{ id: name + " 1" }],
                 links: [],
             };
 
             this.setState({ data });
         }
-        var index = this.state.compSchemas.findIndex(x => x.id === compName);
+        var index = this.state.compSchemas.findIndex(x => x.id === name);
         if (index != null) {
             this.state.crntSchema = this.state.compSchemas[index].schema;
-        }
-    };
-    /**
-     * Remove a node.
-     */
-    onClickRemoveNode = () => {
-        if (this.state.data.nodes && this.state.data.nodes.length) {
-            const id = this.state.data.nodes[0].id;
-
-            this.state.data.nodes.splice(0, 1);
-            const links = this.state.data.links.filter(l => l.source !== id && l.target !== id);
-            const data = { nodes: this.state.data.nodes, links };
-
-            this.setState({ data });
-        } else {
-            window.alert("No more nodes to remove!");
         }
     };
 
@@ -545,67 +337,67 @@ export default class Sandbox extends React.Component {
         return (
             <div>
                 <button onClick={this.connectNodes} className="btn btn-default btn-margin-left" style={btnStyle}>
-                    Connect
+                    Add Conn
                 </button>
                 <button onClick={this.deleteConnection} className="btn btn-default btn-margin-left" style={btnStyle}>
-                    Delete
+                    Del Conn
                 </button>
                 <button onClick={this.deleteNode} className="btn btn-default btn-margin-left" style={btnStyle}>
-                    Del Con
+                    Del Node
                 </button>
-                <span className="container__graph-info">
-                    <b>Nodes: </b> {this.state.data.nodes.length} | <b>Links: </b> {this.state.data.links.length}
-                </span>
+                <button onClick={this.setProp} className="btn btn-default btn-margin-left" style={btnStyle}>
+                    Set Prop
+                </button>
             </div>
         );
     };
 
     compSelectInRtmp = () => {
         console.info("Clicked InRtmp");
-        this.addComponent("RTMP-IN");
+        this.addComponent("RTMP-IN", "input");
         //this.setState({crntSchema: RtmpInSchema});
     };
     compSelectInRtsp = () => {
         console.info("Clicked InRtsp");
-        this.addComponent("RTSP-IN");
+        this.addComponent("RTSP-IN", "input");
     };
     compSelectInFile = () => {
         console.info("Clicked InFile");
-        this.addComponent("FILE-IN");
+        this.addComponent("FILE-IN", "input");
     };
     compSelectInHls = () => {
         console.info("Clicked InHls");
-        this.addComponent("HLS-IN");
+        this.addComponent("HLS-IN", "input");
     };
 
     compSelectOutRtmp = () => {
         console.info("Clicked OutRtmp");
-        this.addComponent("RTMP-OUT");
+        this.addComponent("RTMP-OUT", "output");
     };
     compSelectOutRtsp = () => {
         console.info("Clicked OutRtsp");
-        this.addComponent("RTSP-OUT");
+        this.addComponent("RTSP-OUT", "output");
     };
     compSelectOutFile = () => {
         console.info("Clicked RTMP");
-        this.addComponent("File-OUT");
+        this.addComponent("FILE-OUT", "output");
     };
     compSelectOutHls = () => {
         console.info("Clicked OutHls");
-        this.addComponent("HLS-OUT");
+        this.addComponent("HLS-OUT", "output");
     };
     compSelectOutHttp = () => {
         console.info("Clicked Http ");
-        this.addComponent("HTTP-OUT");
+        this.addComponent("HTTP-OUT", "output");
     };
 
     compSelectTranscoder = () => {
         console.info("Clicked Transcoder");
-        this.addComponent("TRANSCODER");
+        this.addComponent("TRANSCODER", "transcode");
     };
     compSelectDistStore = () => {
         console.info("Clicked DistStore");
-        this.addComponent("DISTSTORE");
+        this.addComponent("DISTSTORE", "output");
     };
 
     buildComponentListPanel = () => {

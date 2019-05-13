@@ -7,8 +7,9 @@ const ICON_PATH = "./data/res/images/";
 
 const ICON_TYPES = {
     TRANSCODE: ICON_PATH + "transcode.svg",
-    INPUT: ICON_PATH + "transcode.svg",
-    OUTPUT: ICON_PATH + "transcode.svg",
+    INPUT: ICON_PATH + "file.svg",
+    OUTPUT: ICON_PATH + "file.svg",
+    SETTINGS: ICON_PATH + "settings.svg",
     CLOUD: ICON_PATH + "transcode.svg",
     LOCAL: ICON_PATH + "transcode.svg",
 };
@@ -19,10 +20,10 @@ const ICON_TYPES = {
  * @param {Object} props component props to render.
  */
 function Node({ component }) {
-    const isInput = component.type === "transcode";
+    const category = component.categoy;
 
     return (
-        <div className={`flex-container component-node ${isInput ? "input" : "output"}`}>
+        <div className={`flex-container component-node ${category}`}>
             <div className="name">{component.name}</div>
 
             <div className="flex-container fill-space flex-container-row">
@@ -31,13 +32,21 @@ function Node({ component }) {
                         className="icon"
                         style={{
                             backgroundImage: (() => {
-                                switch (component.type) {
+                                switch (component.categoy) {
                                     case "input":
-                                        return `url('${ICON_TYPES.TRANSCODE}')`;
+                                        return `url('${ICON_TYPES.INPUT}')`;
                                     case "output":
+                                        return `url('${ICON_TYPES.OUTPUT}')`;
+                                    case "decode":
+                                        return `url('${ICON_TYPES.TRANSCODE}')`;
+                                    case "encode":
                                         return `url('${ICON_TYPES.TRANSCODE}')`;
                                     case "transcode":
                                         return `url('${ICON_TYPES.TRANSCODE}')`;
+                                    case "filter":
+                                        return `url('${ICON_TYPES.TRANSCODE}')`;
+                                    case "settings":
+                                        return `url('${ICON_TYPES.SETTINGS}')`;
                                     default:
                                         return null;
                                 }

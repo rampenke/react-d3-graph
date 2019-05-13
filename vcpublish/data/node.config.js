@@ -2,6 +2,7 @@ import React from "react";
 import Node from "./Node";
 
 module.exports = {
+    directed: true,
     automaticRearrangeAfterDropNode: false,
     collapsible: false,
     height: 400,
