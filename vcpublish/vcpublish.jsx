@@ -60,8 +60,6 @@ export default class Sandbox extends React.Component {
         this.compSelectDistStore = this.compSelectDistStore.bind(this);
         this.addComponent = this.addComponent.bind(this);
 
-        const crntSchema = schemas.TranscoderSchema;
-
         const uiSchema = {
             height: { "ui:readonly": "true" },
             width: { "ui:readonly": "true" },
@@ -74,23 +72,8 @@ export default class Sandbox extends React.Component {
             config,
             generatedConfig: {},
             schema,
-            crntSchema,
             data,
             fullscreen,
-            compSchemas: [
-                { id: "RTMP-IN", schema: schemas.RtmpInSchema },
-                { id: "RTSP-IN", schema: schemas.RtspInSchema },
-                { id: "HLS-IN", schema: schemas.HlsInSchema },
-                { id: "FILE-IN", schema: schemas.FileInSchema },
-                { id: "RTSP-OUT", schema: schemas.RtspOutSchema },
-                { id: "RTMP-OUT", schema: schemas.RtmpOutSchema },
-                { id: "FILE-OUT", schema: schemas.FileOutSchema },
-                { id: "HLS-OUT", schema: schemas.HlsOutSchema },
-                { id: "HTTP-OUT", schema: schemas.HttpOutSchema },
-                { id: "TRANSCODER", schema: schemas.TranscoderSchema },
-                { id: "DISTSTORE", schema: schemas.DistStoreSchema },
-                { id: "SETTINGS", schema: schemas.SettingsSchema },
-            ],
             opMode: "None",
             prevSelNode: null,
             editNode: null,
@@ -132,9 +115,7 @@ export default class Sandbox extends React.Component {
                 }
             } else if (this.state.opMode == "SETPROP") {
                 if (node != null && node.name != null) {
-                    var schemeidx = this.state.compSchemas.findIndex(x => x.id === node.name);
-                    this.state.crntSchema = this.state.compSchemas[schemeidx].schema;
-                    this.setState({ crntSchema: this.state.crntSchema, editNode: id });
+                    this.setState({ editNode: id });
                 }
             }
         }
@@ -209,10 +190,7 @@ export default class Sandbox extends React.Component {
 
             this.state.data.nodes.push({ id: newNode, name: name, categoy: categoy, formData: null });
 
-            this.setState({
-                data: this.state.data,
-                editNode: newNode,
-            });
+            this.setState({ data: this.state.data, editNode: newNode });
         } else {
             // 1st node
             const data = {
@@ -221,10 +199,6 @@ export default class Sandbox extends React.Component {
             };
 
             this.setState({ data, editNode: newNode });
-        }
-        var index = this.state.compSchemas.findIndex(x => x.id === name);
-        if (index != null) {
-            this.state.crntSchema = this.state.compSchemas[index].schema;
         }
     };
 
@@ -260,6 +234,8 @@ export default class Sandbox extends React.Component {
 
     onFormChange = data => {};
 
+    onClickSaveForm = () => {};
+    onclickReset = () => {};
     /**
      * Generate graph configuration file ready to use!
      */
@@ -278,7 +254,6 @@ export default class Sandbox extends React.Component {
             }
         }
     };
-
     onClickSubmit = () => {
         // Hack for allow submit button to live outside jsonform
         document.body.querySelector(".invisible-button").click();
@@ -364,7 +339,6 @@ export default class Sandbox extends React.Component {
     compSelectInRtmp = () => {
         console.info("Clicked InRtmp");
         this.addComponent("RTMP-IN", "input");
-        //this.setState({crntSchema: RtmpInSchema});
     };
     compSelectInRtsp = () => {
         console.info("Clicked InRtsp");
@@ -498,11 +472,15 @@ export default class Sandbox extends React.Component {
             links: this.state.data.links,
             focusedNodeId: this.state.data.focusedNodeId,
         };
-        var formData = null;
+        var crntSchema = schemas.compSchemas[0].schema;
+        var formData = schemas.compSchemas[0].formData;
         if (this.state.editNode != null) {
             var idx = this.state.data.nodes.findIndex(x => x.id === this.state.editNode);
             if (idx > 0) {
+                var node = this.state.data.nodes[idx];
                 formData = this.state.data.nodes[idx].formData;
+                var schemeidx = schemas.compSchemas.findIndex(x => x.id === node.name);
+                crntSchema = schemas.compSchemas[schemeidx].schema;
             }
         }
         const graphProps = {
@@ -541,14 +519,20 @@ export default class Sandbox extends React.Component {
                     <h3>Component Properties</h3>
                     <Form
                         className="form-wrapper"
-                        schema={this.state.crntSchema}
+                        schema={crntSchema}
                         uiSchema={this.uicrntSchema}
                         formData={formData}
                         onChange={this.refreshGraph}
                         onSubmit={this.onSubmit}
                     >
-                        <button className="submit-button" type="submit" />
+                        <button className="invisible-button" type="submit" />
                     </Form>
+                    <button className="submit-button btn btn-primary" onClick={this.onClickSubmit}>
+                        Save
+                    </button>
+                    <button className="reset-button btn btn-danger" onClick={this.onclickReset}>
+                        Reset
+                    </button>
                 </div>
             </div>
         );
