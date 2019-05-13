@@ -59,19 +59,12 @@ export default class Sandbox extends React.Component {
         this.compSelectTranscoder = this.compSelectTranscoder.bind(this);
         this.compSelectDistStore = this.compSelectDistStore.bind(this);
         this.addComponent = this.addComponent.bind(this);
-
-        const uiSchema = {
-            height: { "ui:readonly": "true" },
-            width: { "ui:readonly": "true" },
-        };
-
-        this.uiSchema = uiSchema;
-        this.uicrntSchema = uiSchema;
+        this.onClickOpenFile = this.onClickOpenFile.bind(this);
+        this.onClickSaveFile = this.onClickSaveFile.bind(this);
 
         this.state = {
             config,
             generatedConfig: {},
-            schema,
             data,
             fullscreen,
             opMode: "None",
@@ -174,6 +167,12 @@ export default class Sandbox extends React.Component {
         this.setState({ opMode: "SETPROP", prevSelNode: null });
     };
 
+    onClickOpenFile() {
+        console.log(this.state.data);
+    }
+    onClickSaveFile() {
+        console.log(this.state.data);
+    }
     /**
      * If you have moved nodes you will have them restore theirs positions
      * when you call resetNodesPositions.
@@ -187,18 +186,13 @@ export default class Sandbox extends React.Component {
             let i = Math.floor(Math.random() * (maxIndex - minIndex + 1) + minIndex);
             let nLinks = Math.floor(Math.random() * (5 - minIndex + 1) + minIndex);
             const newNode = name + ` ${this.state.data.nodes.length}`;
-
-            this.state.data.nodes.push({ id: newNode, name: name, categoy: categoy, formData: null });
+            var schemeidx = schemas.compSchemas.findIndex(x => x.id === name);
+            var formData = schemas.compSchemas[schemeidx].formData;
+            this.state.data.nodes.push({ id: newNode, name: name, categoy: categoy, formData: formData });
 
             this.setState({ data: this.state.data, editNode: newNode });
         } else {
-            // 1st node
-            const data = {
-                nodes: [{ id: name + " 1" }],
-                links: [],
-            };
-
-            this.setState({ data, editNode: newNode });
+            console.info("Should not come here. Settings node should be the first node.");
         }
     };
 
@@ -234,16 +228,7 @@ export default class Sandbox extends React.Component {
 
     onFormChange = data => {};
 
-    onClickSaveForm = () => {};
     onclickReset = () => {};
-    /**
-     * Generate graph configuration file ready to use!
-     */
-    //onSubmit = data => {
-    //    const { config } = this._buildGraphConfig(data);
-    //
-    //    this.setState({ generatedConfig: config });
-    //};
 
     onSubmit = data => {
         if (this.state.editNode != null) {
@@ -474,6 +459,7 @@ export default class Sandbox extends React.Component {
         };
         var crntSchema = schemas.compSchemas[0].schema;
         var formData = schemas.compSchemas[0].formData;
+        var uiSchema = {};
         if (this.state.editNode != null) {
             var idx = this.state.data.nodes.findIndex(x => x.id === this.state.editNode);
             if (idx > 0) {
@@ -504,6 +490,16 @@ export default class Sandbox extends React.Component {
             <div className="container">
                 <div className="container__main_menu">
                     <h3>Main</h3>
+                    <div>
+                        <button className="file-open-button" onClick={this.onClickOpenFile}>
+                            Open
+                        </button>
+                    </div>
+                    <div>
+                        <button className="file-save-button" onClick={this.onClickSaveFile}>
+                            Save
+                        </button>
+                    </div>
                 </div>
                 <div className="container__form_comp_list">
                     <h3>Pipeline Components</h3>
@@ -520,7 +516,7 @@ export default class Sandbox extends React.Component {
                     <Form
                         className="form-wrapper"
                         schema={crntSchema}
-                        uiSchema={this.uicrntSchema}
+                        uiSchema={uiSchema}
                         formData={formData}
                         onChange={this.refreshGraph}
                         onSubmit={this.onSubmit}
