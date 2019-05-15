@@ -20,6 +20,8 @@ import {
     AccordionItemButton,
     AccordionItemPanel,
 } from "react-accessible-accordion";
+import Files from "react-files";
+import { saveAs } from "file-saver";
 
 import * as schemas from "./schemas";
 import CodeGen from "./codegen";
@@ -37,7 +39,7 @@ export default class Sandbox extends React.Component {
     constructor(props) {
         super(props);
 
-        const { config: configOverride, data, fullscreen } = sandboxData;
+        const { config: configOverride, data } = sandboxData;
         const config = Object.assign(defaultConfig, configOverride);
         const schemaProps = utils.generateFormSchema(config, "", {});
         const crntSchemaProps = utils.generateFormSchema(config, "", {});
@@ -68,10 +70,17 @@ export default class Sandbox extends React.Component {
             config,
             generatedConfig: {},
             data,
-            fullscreen,
             opMode: "None",
             prevSelNode: null,
             editNode: null,
+        };
+        this.fileReader = new FileReader();
+
+        this.fileReader.onload = event => {
+            // or do whatever manipulation you want on JSON.parse(event.target.result) here.
+            this.setState({ data: JSON.parse(event.target.result) }, () => {
+                console.log(this.state.data);
+            });
         };
     }
 
@@ -145,15 +154,6 @@ export default class Sandbox extends React.Component {
     onMouseOutLink = (source, target) =>
         console.info(`Do something when mouse is out of link between ${source} and ${target}`);
 
-    /**
-     * Sets on/off fullscreen visualization mode.
-     */
-    onToggleFullScreen = () => {
-        const fullscreen = !this.state.fullscreen;
-
-        this.setState({ fullscreen });
-    };
-
     connectNodes = () => {
         //this.state.opMode = "CONNODE";
         this.setState({ opMode: "CONNODE", prevSelNode: null });
@@ -169,11 +169,15 @@ export default class Sandbox extends React.Component {
         this.setState({ opMode: "SETPROP", prevSelNode: null });
     };
 
-    onClickOpenFile() {
-        console.log(this.state.data);
+    onClickOpenFile(files) {
+        console.log(files);
+        this.fileReader.readAsText(files[0]);
     }
     onClickSaveFile() {
         console.log(this.state.data);
+        var jsonse = JSON.stringify(this.state.data);
+        var blob = new Blob([jsonse], { type: "application/json" });
+        saveAs(blob, "graph.vps");
     }
     onClickGenCmd() {
         const codeGen = new CodeGen();
@@ -293,23 +297,12 @@ export default class Sandbox extends React.Component {
     onGraphDataUpdate = data => this.setState({ data });
 
     /**
-     * Build common piece of the interface that contains some interactions such as
-     * fullscreen, play/pause, + and - buttons.
+     * Build common piece of the interface
      */
     buildCommonInteractionsPanel = () => {
         const btnStyle = {
             cursor: this.state.config.staticGraph ? "not-allowed" : "pointer",
         };
-
-        const fullscreen = this.state.fullscreen ? (
-            <span className="cross-icon" onClick={this.onToggleFullScreen}>
-                ❌
-            </span>
-        ) : (
-            <button onClick={this.onToggleFullScreen} className="btn btn-default btn-margin-left">
-                Fullscreen
-            </button>
-        );
 
         return (
             <div>
@@ -457,6 +450,35 @@ export default class Sandbox extends React.Component {
             </Accordion>
         );
     };
+
+    onFilesChange = function(files) {
+        console.log(files);
+        this.fileReader.readAsText(file[0]);
+    };
+
+    onFilesError = function(error, file) {
+        console.log("error code " + error.code + ": " + error.message);
+    };
+
+    buildFileControls = () => {
+        return (
+            <div className="files">
+                <Files
+                    className="files-dropzone"
+                    onChange={this.onClickOpenFile}
+                    onError={this.onFilesError}
+                    accepts={[".vps"]}
+                    multiple
+                    maxFiles={3}
+                    maxFileSize={10000000}
+                    minFileSize={0}
+                    clickable
+                >
+                    <button> Open </button>
+                </Files>
+            </div>
+        );
+    };
     render() {
         // This does not happens in this sandbox scenario running time, but if we set staticGraph config
         // to true in the constructor we will provide nodes with initial positions
@@ -498,11 +520,7 @@ export default class Sandbox extends React.Component {
             <div className="container">
                 <div className="container__main_menu">
                     <h3>Main</h3>
-                    <div>
-                        <button className="file-open-button" onClick={this.onClickOpenFile}>
-                            Open
-                        </button>
-                    </div>
+                    {this.buildFileControls()}
                     <div>
                         <button className="file-save-button" onClick={this.onClickSaveFile}>
                             Save

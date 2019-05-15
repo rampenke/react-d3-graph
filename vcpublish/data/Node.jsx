@@ -24,7 +24,7 @@ function Node({ component }) {
 
     return (
         <div className={`flex-container component-node ${category}`}>
-            <div className="name">{component.name}</div>
+            <div className="name">{component.id}</div>
 
             <div className="flex-container fill-space flex-container-row">
                 <div className="fill-space">
