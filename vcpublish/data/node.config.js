@@ -3,18 +3,26 @@ import Node from "./Node";
 
 module.exports = {
     directed: true,
-    automaticRearrangeAfterDropNode: false,
+    automaticRearrangeAfterDropNode: true,
+    enableFocusAnimation: false,
     collapsible: false,
     height: 400,
     highlightDegree: 1,
     highlightOpacity: 0.2,
     linkHighlightBehavior: true,
+    linkLength: 300,
     maxZoom: 8,
     minZoom: 0.1,
     nodeHighlightBehavior: true,
-    panAndZoom: false,
+    panAndZoom: true,
     staticGraph: false,
     width: 800,
+    d3: {
+        alphaTarget: 0.05,
+        gravity: -300,
+        linkLength: 100,
+        linkStrength: 1,
+    },
     node: {
         color: "#d3d3d3",
         fontColor: "black",

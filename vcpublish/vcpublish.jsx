@@ -22,6 +22,7 @@ import {
 } from "react-accessible-accordion";
 
 import * as schemas from "./schemas";
+import CodeGen from "./codegen";
 
 /**
  * This is a sample integration of react-d3-graph, in this particular case all the rd3g config properties
@@ -61,6 +62,7 @@ export default class Sandbox extends React.Component {
         this.addComponent = this.addComponent.bind(this);
         this.onClickOpenFile = this.onClickOpenFile.bind(this);
         this.onClickSaveFile = this.onClickSaveFile.bind(this);
+        this.onClickGenCmd = this.onClickGenCmd.bind(this);
 
         this.state = {
             config,
@@ -104,7 +106,7 @@ export default class Sandbox extends React.Component {
                     this.state.data.nodes.splice(idx, 1);
                     const links = this.state.data.links.filter(l => l.source !== id && l.target !== id);
                     const data = { nodes: this.state.data.nodes, links };
-                    this.setState({ data: this.state.data });
+                    this.setState({ data });
                 }
             } else if (this.state.opMode == "SETPROP") {
                 if (node != null && node.name != null) {
@@ -173,13 +175,19 @@ export default class Sandbox extends React.Component {
     onClickSaveFile() {
         console.log(this.state.data);
     }
+    onClickGenCmd() {
+        const codeGen = new CodeGen();
+        var cmd = codeGen.exec(this.state.data);
+        console.log(cmd);
+    }
+
     /**
      * If you have moved nodes you will have them restore theirs positions
      * when you call resetNodesPositions.
      */
     resetNodesPositions = () => this.refs.graph.resetNodesPositions();
 
-    addComponent = (name, categoy) => {
+    addComponent = (name, category) => {
         if (this.state.data.nodes && this.state.data.nodes.length) {
             const maxIndex = this.state.data.nodes.length - 1;
             const minIndex = 0;
@@ -188,7 +196,7 @@ export default class Sandbox extends React.Component {
             const newNode = name + ` ${this.state.data.nodes.length}`;
             var schemeidx = schemas.compSchemas.findIndex(x => x.id === name);
             var formData = schemas.compSchemas[schemeidx].formData;
-            this.state.data.nodes.push({ id: newNode, name: name, categoy: categoy, formData: formData });
+            this.state.data.nodes.push({ id: newNode, name: name, category: category, formData: formData });
 
             this.setState({ data: this.state.data, editNode: newNode });
         } else {
@@ -234,7 +242,7 @@ export default class Sandbox extends React.Component {
         if (this.state.editNode != null) {
             var idx = this.state.data.nodes.findIndex(x => x.id === this.state.editNode);
             if (idx != null) {
-                this.state.data.nodes[idx].formData = data;
+                this.state.data.nodes[idx].formData = data.formData;
                 this.setState({ data: this.state.data });
             }
         }
@@ -498,6 +506,11 @@ export default class Sandbox extends React.Component {
                     <div>
                         <button className="file-save-button" onClick={this.onClickSaveFile}>
                             Save
+                        </button>
+                    </div>
+                    <div>
+                        <button className="file-gencmd-button" onClick={this.onClickGenCmd}>
+                            Gen Cmd
                         </button>
                     </div>
                 </div>

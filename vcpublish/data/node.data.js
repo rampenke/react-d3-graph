@@ -9,8 +9,9 @@ module.exports = {
         {
             id: "SETTINGS",
             name: "SETTINGS",
-            type: "settings",
+            category: "settings",
             isCloud: false,
+            formData: null,
         },
     ],
 };

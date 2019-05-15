@@ -20,7 +20,7 @@ const ICON_TYPES = {
  * @param {Object} props component props to render.
  */
 function Node({ component }) {
-    const category = component.categoy;
+    const category = component.category;
 
     return (
         <div className={`flex-container component-node ${category}`}>
@@ -32,7 +32,7 @@ function Node({ component }) {
                         className="icon"
                         style={{
                             backgroundImage: (() => {
-                                switch (component.categoy) {
+                                switch (component.category) {
                                     case "input":
                                         return `url('${ICON_TYPES.INPUT}')`;
                                     case "output":
