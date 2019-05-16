@@ -179,10 +179,31 @@ export default class Sandbox extends React.Component {
         var blob = new Blob([jsonse], { type: "application/json" });
         saveAs(blob, "graph.vps");
     }
+
     onClickGenCmd() {
         const codeGen = new CodeGen();
-        var cmd = codeGen.exec(this.state.data);
-        console.log(cmd);
+        for (var i = 0; i < this.state.data.nodes.length; i++) {
+            var comp = this.state.data.nodes[i];
+            if (comp.name == "TRANSCODER") {
+                var cmd = "";
+                var srcIdx = this.state.data.links.findIndex(x => x.target == comp.id);
+                if (srcIdx > 0) {
+                    var src = this.state.data.nodes[srcIdx];
+                    // Do nothing for now
+                }
+                cmd = cmd + codeGen.transcodeGen(comp.formData);
+                var sinkLinkIdx = this.state.data.links.findIndex(x => x.source == comp.id);
+                if (sinkLinkIdx > 0) {
+                    var sinkId = this.state.data.links[sinkLinkIdx].target;
+                    var sinkIdx = this.state.data.nodes.findIndex(x => x.id == sinkId);
+                    if (sinkIdx > 0) {
+                        var sink = this.state.data.nodes[sinkIdx];
+                        cmd = cmd + codeGen.outputGen(sink.formData, sink.name);
+                    }
+                }
+                console.log(cmd);
+            }
+        }
     }
 
     /**

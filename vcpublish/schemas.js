@@ -28,7 +28,20 @@ export const TranscoderSchema = {
             title: "framerate",
             default: "30.0",
         },
+        framerate: {
+            type: "string",
+            title: "url",
+            default: "rtmp://127.0.0.1:1935/live/test1",
+        },
     },
+};
+
+export const TranscodeDict = {
+    bitrate: "b",
+    scale: "s",
+    codec: "c:v",
+    framerate: "r",
+    url: "i",
 };
 
 export const TranscoderFormDataDef = {
@@ -37,6 +50,7 @@ export const TranscoderFormDataDef = {
     height: "1080",
     codec: "h264",
     framerate: "30.0",
+    url: "rtmp://127.0.0.1:1935/live/test1",
 };
 
 export const RtmpInSchema = {
@@ -50,6 +64,10 @@ export const RtmpInSchema = {
             default: "rtmp://127.0.0.1:1935/live/test1",
         },
     },
+};
+
+export const RtmpInDict = {
+    url: "i",
 };
 
 export const RtmpInFormDataDef = {
@@ -69,6 +87,10 @@ export const RtspInSchema = {
     },
 };
 
+export const RtspInDict = {
+    url: "i",
+};
+
 export const RtspInFormDataDef = {
     url: "rtsp://127.0.0.1:554/live/test1",
 };
@@ -84,6 +106,10 @@ export const HlsInSchema = {
             default: "http://127.0.0.1:8080/live/test1.m3u8",
         },
     },
+};
+
+export const HlsInDict = {
+    url: "i",
 };
 
 export const HlsInFormDataDef = {
@@ -103,6 +129,10 @@ export const FileInSchema = {
     },
 };
 
+export const FileInDict = {
+    url: "i",
+};
+
 export const FileInFormDataDef = {
     url: "/mnt/media/TestStream.Mp4",
 };
@@ -118,6 +148,10 @@ export const RtmpOutSchema = {
             default: "rtmp://127.0.0.1:1935/live/test1",
         },
     },
+};
+
+export const RtmpOutDict = {
+    url: "",
 };
 
 export const RtmpOutFormDataDef = {
@@ -136,6 +170,11 @@ export const RtspOutSchema = {
         },
     },
 };
+
+export const RtspOutDict = {
+    url: "",
+};
+
 export const RtspOutFormDataDef = {
     url: "rtsp://127.0.0.1:554/live/test1",
 };
@@ -152,6 +191,11 @@ export const HlsOutSchema = {
         },
     },
 };
+
+export const HlsOutDict = {
+    url: "",
+};
+
 export const HlsOutFormDataDef = {
     url: "http://127.0.0.1/live",
 };
@@ -168,6 +212,10 @@ export const HttpOutSchema = {
             default: "http://127.0.0.1/live",
         },
     },
+};
+
+export const HttpOutDict = {
+    url: "",
 };
 
 export const HttpOutFormDataDef = {
@@ -187,6 +235,10 @@ export const FileOutSchema = {
     },
 };
 
+export const FileOutDict = {
+    url: "",
+};
+
 export const FileOutFormDataDef = {
     url: "/mnt/media/TestStream.Mp4",
 };
@@ -202,6 +254,10 @@ export const DistStoreSchema = {
             default: "ipfs://127.0.0.1/QmPXMA1oRtoT627YKaDPDQ4PwA8tdP9rWuAAweLzqSwAWT/test",
         },
     },
+};
+
+export const DistStoreDict = {
+    url: "",
 };
 
 export const DistStoreFormDataDef = {
@@ -224,6 +280,10 @@ export const SettingsSchema = {
             default: "30",
         },
     },
+};
+
+export const SettingsDict = {
+    framerate: "framerate",
 };
 
 export const SettingsFormDataDef = {
