@@ -147,15 +147,22 @@ export const RtmpOutSchema = {
             title: "url",
             default: "rtmp://127.0.0.1:1935/live/test1",
         },
+        format: {
+            type: "string",
+            title: "format",
+            default: "flv",
+        },
     },
 };
 
 export const RtmpOutDict = {
     url: "",
+    format: "f",
 };
 
 export const RtmpOutFormDataDef = {
     url: "rtmp://127.0.0.1:1935/live/test1",
+    format: "flv",
 };
 
 export const RtspOutSchema = {
@@ -264,6 +271,27 @@ export const DistStoreFormDataDef = {
     url: "ipfs://127.0.0.1/QmPXMA1oRtoT627YKaDPDQ4PwA8tdP9rWuAAweLzqSwAWT/test",
 };
 
+export const IngestSchema = {
+    title: "Ingest",
+    type: "object",
+    required: ["name"],
+    properties: {
+        url: {
+            type: "string",
+            title: "name",
+            default: "Ingest",
+        },
+    },
+};
+
+export const IngestDict = {
+    name: "",
+};
+
+export const IngestFormDataDef = {
+    name: "Ingest",
+};
+
 export const SettingsSchema = {
     title: "FFMPEG Settings",
     type: "object",
@@ -292,16 +320,17 @@ export const SettingsFormDataDef = {
 };
 
 export const compSchemas = [
-    { id: "SETTINGS", schema: SettingsSchema, formData: SettingsFormDataDef },
-    { id: "RTMP-IN", schema: RtmpInSchema, formData: RtmpInFormDataDef },
-    { id: "RTSP-IN", schema: RtspInSchema, formData: RtspInFormDataDef },
-    { id: "HLS-IN", schema: HlsInSchema, formData: HlsInFormDataDef },
-    { id: "FILE-IN", schema: FileInSchema, formData: FileInFormDataDef },
-    { id: "RTSP-OUT", schema: RtspOutSchema, formData: RtspOutFormDataDef },
-    { id: "RTMP-OUT", schema: RtmpOutSchema, formData: RtmpOutFormDataDef },
-    { id: "FILE-OUT", schema: FileOutSchema, formData: FileOutFormDataDef },
-    { id: "HLS-OUT", schema: HlsOutSchema, formData: HlsOutFormDataDef },
-    { id: "HTTP-OUT", schema: HttpOutSchema, formData: RtmpInFormDataDef },
-    { id: "TRANSCODER", schema: TranscoderSchema, formData: TranscoderFormDataDef },
-    { id: "DISTSTORE", schema: DistStoreSchema, formData: DistStoreFormDataDef },
+    { id: "SETTINGS", schema: SettingsSchema, formData: SettingsFormDataDef, dict: SettingsDict },
+    { id: "RTMP-IN", schema: RtmpInSchema, formData: RtmpInFormDataDef, dict: RtmpInDict },
+    { id: "RTSP-IN", schema: RtspInSchema, formData: RtspInFormDataDef, dict: RtspInDict },
+    { id: "HLS-IN", schema: HlsInSchema, formData: HlsInFormDataDef, dict: HlsInDict },
+    { id: "FILE-IN", schema: FileInSchema, formData: FileInFormDataDef, dict: FileInDict },
+    { id: "RTSP-OUT", schema: RtspOutSchema, formData: RtspOutFormDataDef, dict: RtspOutDict },
+    { id: "RTMP-OUT", schema: RtmpOutSchema, formData: RtmpOutFormDataDef, dict: RtmpOutDict },
+    { id: "FILE-OUT", schema: FileOutSchema, formData: FileOutFormDataDef, dict: FileOutDict },
+    { id: "HLS-OUT", schema: HlsOutSchema, formData: HlsOutFormDataDef, dict: HlsOutDict },
+    { id: "HTTP-OUT", schema: HttpOutSchema, formData: RtmpInFormDataDef, dict: HttpOutDict },
+    { id: "TRANSCODER", schema: TranscoderSchema, formData: TranscoderFormDataDef, dict: TranscodeDict },
+    { id: "DISTSTORE", schema: DistStoreSchema, formData: DistStoreFormDataDef, dict: DistStoreDict },
+    { id: "INGEST", schema: IngestSchema, formData: IngestFormDataDef, dict: IngestDict },
 ];

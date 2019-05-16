@@ -61,10 +61,12 @@ export default class Sandbox extends React.Component {
 
         this.compSelectTranscoder = this.compSelectTranscoder.bind(this);
         this.compSelectDistStore = this.compSelectDistStore.bind(this);
+        this.compSelectIngest = this.compSelectIngest.bind(this);
         this.addComponent = this.addComponent.bind(this);
         this.onClickOpenFile = this.onClickOpenFile.bind(this);
         this.onClickSaveFile = this.onClickSaveFile.bind(this);
         this.onClickGenCmd = this.onClickGenCmd.bind(this);
+        this.getFfmpegCmd = this.getFfmpegCmd.bind(this);
 
         this.state = {
             config,
@@ -73,6 +75,7 @@ export default class Sandbox extends React.Component {
             opMode: "None",
             prevSelNode: null,
             editNode: null,
+            ffmpegCode: ["Click gencmd"],
         };
         this.fileReader = new FileReader();
 
@@ -180,12 +183,56 @@ export default class Sandbox extends React.Component {
         saveAs(blob, "graph.vps");
     }
 
+    getConnectedSrc(comp, data) {
+        var src = null;
+
+        var srcLinkIdx = data.links.findIndex(x => x.target == comp.id);
+        if (srcLinkIdx > 0) {
+            var srcId = data.links[srcLinkIdx].source;
+            var srcIdx = data.nodes.findIndex(x => x.id == srcId);
+            if (srcIdx > 0) {
+                src = data.nodes[srcIdx];
+            }
+        }
+        return src;
+    }
+    getConnectedSinks(comp, data) {
+        var sinks = [];
+        for (var i = 0; i < data.links.length; i++) {
+            if (data.links[i].source == comp.id) {
+                var sinkId = data.links[i].target;
+                var sinkIdx = data.nodes.findIndex(x => x.id == sinkId);
+                if (sinkIdx > 0) {
+                    var sink = data.nodes[sinkIdx];
+                    sinks.push(sink);
+                }
+            }
+        }
+        return sinks;
+    }
+
     onClickGenCmd() {
+        var ffmpegCode = [];
         const codeGen = new CodeGen();
+
+        for (var i = 0; i < this.state.data.nodes.length; i++) {
+            var comp = this.state.data.nodes[i];
+            if (comp.name == "INGEST") {
+                var cmd = "";
+                cmd = cmd + comp.id + ": ";
+                var src = this.getConnectedSrc(comp, this.state.data);
+                var sinks = this.getConnectedSinks(comp, this.state.data);
+                cmd = cmd + codeGen.ingestGen(comp, src, sinks);
+                console.log(cmd);
+                ffmpegCode.push(cmd);
+            }
+        }
+
         for (var i = 0; i < this.state.data.nodes.length; i++) {
             var comp = this.state.data.nodes[i];
             if (comp.name == "TRANSCODER") {
                 var cmd = "";
+                cmd = cmd + comp.id + ": ";
                 var srcIdx = this.state.data.links.findIndex(x => x.target == comp.id);
                 if (srcIdx > 0) {
                     var src = this.state.data.nodes[srcIdx];
@@ -202,9 +249,23 @@ export default class Sandbox extends React.Component {
                     }
                 }
                 console.log(cmd);
+                ffmpegCode.push(cmd);
             }
         }
+
+        this.setState({ ffmpegCode: ffmpegCode });
     }
+
+    getFfmpegCmd = () => {
+        var codeLines = this.state.ffmpegCode;
+        return (
+            <ol>
+                {codeLines.map(codeLine => (
+                    <li>{codeLine}</li>
+                ))}
+            </ol>
+        );
+    };
 
     /**
      * If you have moved nodes you will have them restore theirs positions
@@ -390,6 +451,11 @@ export default class Sandbox extends React.Component {
         this.addComponent("DISTSTORE", "output");
     };
 
+    compSelectIngest = () => {
+        console.info("Clicked Ingest");
+        this.addComponent("INGEST", "transcode");
+    };
+
     buildComponentListPanel = () => {
         return (
             <Accordion>
@@ -436,6 +502,15 @@ export default class Sandbox extends React.Component {
                         <button onClick={this.compSelectDistStore}>Distributed Storage</button>
                     </AccordionItemPanel>
                 </AccordionItem>
+                <AccordionItem>
+                    <AccordionItemHeading>
+                        <AccordionItemButton>Ingest</AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                        <button onClick={this.compSelectIngest}>Ingest</button>
+                    </AccordionItemPanel>
+                </AccordionItem>
+
                 <AccordionItem>
                     <AccordionItemHeading>
                         <AccordionItemButton>Outputs</AccordionItemButton>
@@ -562,6 +637,7 @@ export default class Sandbox extends React.Component {
                     <div className="container__graph-area">
                         <Graph ref="graph" {...graphProps} />
                     </div>
+                    {this.getFfmpegCmd()}
                 </div>
                 <div className="container__form_comp_prop">
                     <h3>Component Properties</h3>
