@@ -251,7 +251,7 @@ export const FileOutFormDataDef = {
 };
 
 export const DistStoreSchema = {
-    title: "Dist Store",
+    title: "DistStore",
     type: "object",
     required: ["url"],
     properties: {
@@ -293,7 +293,7 @@ export const IngestFormDataDef = {
 };
 
 export const SettingsSchema = {
-    title: "FFMPEG Settings",
+    title: "Settings",
     type: "object",
     required: [],
     properties: {

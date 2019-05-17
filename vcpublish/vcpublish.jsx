@@ -322,7 +322,15 @@ export default class Sandbox extends React.Component {
 
     onFormChange = data => {};
 
-    onclickReset = () => {};
+    onclickReset = () => {
+        if (this.state.editNode != null) {
+            var idx = this.state.data.nodes.findIndex(x => x.id === this.state.editNode);
+            if (idx != null) {
+                this.state.data.nodes[idx].formData = schemas.compSchemas[idx].formData;
+                this.setState({ data: this.state.data });
+            }
+        }
+    };
 
     onSubmit = data => {
         if (this.state.editNode != null) {
@@ -388,16 +396,28 @@ export default class Sandbox extends React.Component {
 
         return (
             <div>
-                <button onClick={this.connectNodes} className="btn btn-default btn-margin-left" style={btnStyle}>
+                <button
+                    onClick={this.connectNodes}
+                    className="btn btn-default btn-margin-left edit-button"
+                    style={btnStyle}
+                >
                     Add Conn
                 </button>
-                <button onClick={this.deleteConnection} className="btn btn-default btn-margin-left" style={btnStyle}>
+                <button
+                    onClick={this.deleteConnection}
+                    className="btn btn-default btn-margin-left edit-button"
+                    style={btnStyle}
+                >
                     Del Conn
                 </button>
-                <button onClick={this.deleteNode} className="btn btn-default btn-margin-left" style={btnStyle}>
+                <button
+                    onClick={this.deleteNode}
+                    className="btn btn-default btn-margin-left edit-button"
+                    style={btnStyle}
+                >
                     Del Node
                 </button>
-                <button onClick={this.setProp} className="btn btn-default btn-margin-left" style={btnStyle}>
+                <button onClick={this.setProp} className="btn btn-default btn-margin-left edit-button" style={btnStyle}>
                     Set Prop
                 </button>
             </div>
@@ -491,15 +511,19 @@ export default class Sandbox extends React.Component {
                         <AccordionItemButton>Transcoder</AccordionItemButton>
                     </AccordionItemHeading>
                     <AccordionItemPanel>
-                        <button onClick={this.compSelectTranscoder}>Transcoder</button>
+                        <button className="comp-button" onClick={this.compSelectTranscoder}>
+                            Transcoder
+                        </button>
                     </AccordionItemPanel>
                 </AccordionItem>
                 <AccordionItem>
                     <AccordionItemHeading>
-                        <AccordionItemButton>Distributed Storage</AccordionItemButton>
+                        <AccordionItemButton>DistStore</AccordionItemButton>
                     </AccordionItemHeading>
                     <AccordionItemPanel>
-                        <button onClick={this.compSelectDistStore}>Distributed Storage</button>
+                        <button className="comp-button" onClick={this.compSelectDistStore}>
+                            Distributed Storage
+                        </button>
                     </AccordionItemPanel>
                 </AccordionItem>
                 <AccordionItem>
@@ -507,7 +531,9 @@ export default class Sandbox extends React.Component {
                         <AccordionItemButton>Ingest</AccordionItemButton>
                     </AccordionItemHeading>
                     <AccordionItemPanel>
-                        <button onClick={this.compSelectIngest}>Ingest</button>
+                        <button className="comp-button" onClick={this.compSelectIngest}>
+                            Ingest
+                        </button>
                     </AccordionItemPanel>
                 </AccordionItem>
 
@@ -558,20 +584,32 @@ export default class Sandbox extends React.Component {
 
     buildFileControls = () => {
         return (
-            <div className="files">
-                <Files
-                    className="files-dropzone"
-                    onChange={this.onClickOpenFile}
-                    onError={this.onFilesError}
-                    accepts={[".vps"]}
-                    multiple
-                    maxFiles={3}
-                    maxFileSize={10000000}
-                    minFileSize={0}
-                    clickable
-                >
-                    <button> Open </button>
-                </Files>
+            <div>
+                <div className="files">
+                    <Files
+                        className="files-dropzone"
+                        onChange={this.onClickOpenFile}
+                        onError={this.onFilesError}
+                        accepts={[".vps"]}
+                        multiple
+                        maxFiles={1}
+                        maxFileSize={10000000}
+                        minFileSize={0}
+                        clickable
+                    >
+                        <button className="main-menu-button"> Open </button>
+                    </Files>
+                </div>
+                <div>
+                    <button className="main-menu-button" onClick={this.onClickSaveFile}>
+                        Save
+                    </button>
+                </div>
+                <div>
+                    <button className="main-menu-button" onClick={this.onClickGenCmd}>
+                        Gen Cmd
+                    </button>
+                </div>
             </div>
         );
     };
@@ -617,19 +655,9 @@ export default class Sandbox extends React.Component {
                 <div className="container__main_menu">
                     <h3>Main</h3>
                     {this.buildFileControls()}
-                    <div>
-                        <button className="file-save-button" onClick={this.onClickSaveFile}>
-                            Save
-                        </button>
-                    </div>
-                    <div>
-                        <button className="file-gencmd-button" onClick={this.onClickGenCmd}>
-                            Gen Cmd
-                        </button>
-                    </div>
                 </div>
                 <div className="container__form_comp_list">
-                    <h3>Pipeline Components</h3>
+                    <h3 className="panel-heading">Components</h3>
                     {this.buildComponentListPanel()}
                 </div>
                 <div className="container__graph">
@@ -640,7 +668,7 @@ export default class Sandbox extends React.Component {
                     {this.getFfmpegCmd()}
                 </div>
                 <div className="container__form_comp_prop">
-                    <h3>Component Properties</h3>
+                    <h3 className="panel-heading">Properties</h3>
                     <Form
                         className="form-wrapper"
                         schema={crntSchema}

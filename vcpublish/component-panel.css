@@ -1,3 +1,11 @@
+.comp-button {
+    width: 100%;
+    background-color: #0f0f0f;
+    color: #f6f1f8;
+    border: none;
+    margin-top: 5px;
+}
+
 .accordion {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 2px;
@@ -8,8 +16,8 @@
 }
 
 .accordion__button {
-    background-color: #f4f4f4;
-    color: #444;
+    background-color: #0f0f0f;
+    color: #f6f1f8;
     cursor: pointer;
     padding: 18px;
     width: 100%;
@@ -18,7 +26,7 @@
 }
 
 .accordion__button:hover {
-    background-color: #ddd;
+    background-color: #240f42;
 }
 
 .accordion__button:before {

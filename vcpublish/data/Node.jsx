@@ -15,8 +15,8 @@ const ICON_TYPES = {
 };
 
 /**
- * Component that renders a person's name and gender, along with icons
- * representing if they have a driver license for bike and / or car.
+ * Component that renders a pipeline component name along with icons
+ * representing.
  * @param {Object} props component props to render.
  */
 function Node({ component }) {

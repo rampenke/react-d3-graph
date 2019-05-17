@@ -5,6 +5,7 @@
     margin: 4px;
     overflow: hidden;
     position: fixed;
+    background-color: #0f0f0f;
 }
 
 .container > div {
@@ -19,8 +20,10 @@
 
 .container__main_menu {
     grid-column: 1 / 4;
-    grid-row: 1 / 2;
+    grid-row: 1 / -1;
     max-width: 80px;
+    background-color: #1b0b30;
+    height: 100%;
 }
 
 .container__graph {
@@ -36,9 +39,7 @@
 .btn-margin-left {
     margin-left: 4px;
 }
-.graph-graph-wrapper {
-    width: 100%;
-}
+
 .container__graph-area {
     height: 100%;
     width: 100%;
@@ -49,22 +50,25 @@
     margin-right: 0px;
     z-index: 1;
     overflow: hidden;
+    background-color: #0f071c;
 }
 
 .container__form_comp_prop {
     grid-column: 4/ 4;
-    grid-row: 1 / 4;
+    grid-row: 1 / -1;
     min-width: 80px;
     max-width: 200px;
     z-index: 3;
+    background-color: #1e152a;
 }
 
 .container__form_comp_list {
     grid-column: 2/ 4;
-    grid-row: 1 / 4;
+    grid-row: 1 / -1;
     min-width: 80px;
     max-width: 200px;
     z-index: 3;
+    background-color: #11071f;
 }
 
 .cross-icon {
@@ -100,10 +104,6 @@
     font-size: 0;
 }
 
-.comp-button {
-    width: 100%;
-}
-
 .file-open-button {
     width: 100%;
 }
@@ -113,4 +113,39 @@
 }
 .file-gencmd-button {
     width: 100%;
+}
+
+.panel-heading {
+    font-size: 1.17em;
+    font-weight: bold;
+    text-align: center;
+    color: #f6f1f8;
+}
+
+.control-label {
+    color: #80767e;
+}
+
+.form-control {
+    color: #f6f1f8;
+    background-color: #0a0114;
+}
+
+legend {
+    color: #f6f1f8;
+}
+
+.edit-button {
+    background-color: #0f0f0f;
+    color: #f6f1f8;
+    border: none;
+    margin-top: 5px;
+}
+
+.main-menu-button {
+    width: 100%;
+    background-color: #0f0f0f;
+    color: #f6f1f8;
+    border: none;
+    margin-top: 5px;
 }

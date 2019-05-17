@@ -46,6 +46,16 @@
     box-shadow: 25px 15px palevioletred;
 }
 
+.component-node.ingest {
+    background-color: pink;
+    box-shadow: 25px 15px palevioletred;
+}
+
+.component-node.diststore {
+    background-color: pink;
+    box-shadow: 25px 15px palevioletred;
+}
+
 .component-node.input {
     background-color: lightblue;
     box-shadow: 25px 15px cadetblue;
